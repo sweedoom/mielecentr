@@ -1,0 +1,46 @@
+/* color_11 */
+
+a {color: #a3000a;}
+.button {background: #a3000a;}
+#header .fa {color: #a3000a;}
+#header #header_logo .fa {background: #a3000a;}
+#header_callback a {color: #a3000a;}
+#header .hdslide_home .fa {background: #a3000a;}
+#header .hdslide_contact_zayvka a {background: #a3000a;}
+#header .hdtopmenu ul li:hover {background: #a3000a !important;}
+#header .hdtopmenu ul li a:hover {background: #a3000a;}
+#header_zayavka a {border-color: #a3000a;}
+#header_zayavka a {color: #a3000a;}
+#top_menu_main {background: #fff; color: #000;}
+#flvmenu {background: #fff;}
+#flvmenu ul li a {color: #000;}
+#flvmenu ul li a:hover {color: #000;}
+#flvmenu ul li a:active {color: #000;}
+#top_menu ul li ul li.root-item-selected {background: #a3000a;}
+#top_menu ul li ul li.item-selected {background: #a3000a;}
+#top_menu ul li.item-selected a {color: #000;}
+#top_menu ul li ul li:hover {background: #a3000a;}
+#slider .owl-theme a.slidetextlink {border-color: #a3000a;}
+#slider .owl-theme a.slidetextlink:hover {border-color: #a3000a; background: #a3000a;}
+#block_company .fa {color: #a3000a;}
+#breadcrumb a:hover, #breadcrumb a:focus  {color: #a3000a;}
+#catalog_section_list .box {border-color: #a3000a;}
+#catalog_element .pr-elemright .zakaz_doma a {background: #a3000a;}
+#content_index .index_plus .fa, #content .index_plus .fa {color: #a3000a;}
+#content .link_back a:hover {color: #a3000a;}
+#content_index ol.index_zakaz li:before, #content ol.index_zakaz li:before {background: #a3000a;}
+#content .link_back .fa {background: #a3000a;}
+#content .accordion h2 {background: #a3000a;}
+#content th {background: #a3000a;}
+#portfolio_box h2 a {background: #a3000a;}
+#sidebar .link_all a {background: #a3000a;}
+#sidebar_prais .block .fa {color: #a3000a;}
+#index_photo .prevarr, #index_photo .nextarr {color: #a3000a;}
+#section_element_menu ul.menu-element-list-active2 a.item-selected {color: #a3000a;}
+#section_element_menu ul#vertical-multilevel-menu > li.menu-section-active2 > a {background: #a3000a;}
+#section_element_menu ul#vertical-multilevel-menu > li.menu-section-drive-active > a {background: #a3000a;}
+#section_element_menu ul#vertical-multilevel-menu li a:hover {background: #a3000a;}
+#content #tabs>ul>li.active, #content #tabs>ul>li.active:hover, #content #tabs>ul>li:hover {border-color: #a3000a; color: #a3000a;}
+#contacts .left .fa {color: #a3000a;}
+@media (max-width:768px){#flvmenu > ul, #flvmenu > ul li ul {background: #a3000a;}}
+#uslugi_box_index .img img {border-color: #a3000a;}

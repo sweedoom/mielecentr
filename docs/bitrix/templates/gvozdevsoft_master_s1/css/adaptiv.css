@@ -1,0 +1,784 @@
+/* ADAPTIV */
+
+@media screen and (max-width: 1100px) {	
+
+	#wrapper {
+		box-sizing: border-box;
+	}	
+
+	#portfolio ul li {
+		margin: 0 1.3% 30px 0;
+	}
+
+	#uslugi_box_index .box {
+		width: 31.6%;
+	}
+
+}
+
+
+@media screen and (max-width: 1024px) {
+
+	#header_text {
+		margin: 25px 3% 0 0;
+		padding: 10px 3% 10px 0;
+		display: inline-block;
+	}
+
+	#header_zayavka {
+		margin: 26px 3% 0 0;
+		display: none;
+	}
+
+	#flvmenu > ul > li a {
+		padding: 15px 25px;
+	}
+
+	#uslugi_detail .img_top  #form_slider_uslugi {
+		right: 3%;
+	}
+	
+	#uslugi_detail .img_top .slogan {
+		left: 3%;
+	}
+
+	#portfolio_box h2 a {
+		bottom: 10%;
+	}
+
+	#portfolio_box .box {
+		margin: 0 3.2% 30px 0;
+	}
+
+	#portfolio ul li {
+		margin: 0 1.3% 30px 0;
+	}
+
+	#catalog_section_list .box {
+		margin: 0 1.2% 40px 0;
+	}
+
+	#catalog_section ul li {
+		margin: 0 1.2% 15px 0;
+	}
+
+	#uslugi .block_uslugi {
+		margin: 0 3.2% 30px 0;
+	}
+
+	#sertifikaty .box {
+		margin: 0 2.8% 25px 0;
+	}
+
+	#portfolio ul li {
+		margin: 0 1.2% 30px 0;
+	}
+
+}
+
+@media screen and (max-width: 992px) {
+
+	#wrapper {
+		padding: 70px 3%;
+	}
+
+	#header_top_search form {
+		width: 150px;
+	}
+
+	#block_company ul li span {
+		width: 66%;
+		margin-top: 9px;
+	}
+
+	#sidebar {
+		display: none;
+	}
+
+	#content {
+		margin-left: 0;
+	}
+
+	#breadcrumb {
+		margin: 0 0 30px 0;
+	}
+
+	#catalog_element .pr-elemright {
+		width: calc(100% - 483px);
+	}
+
+	#content_index .news_list .news_item {
+		width: 31.5%;
+	}
+
+	#content_index .news_list .news_item:nth-child(3n) {
+		margin-right: 0;
+	}
+
+	#content_index #uslugi_box_index .box,
+	#content_index #uslugi .block_uslugi,
+	#uslugi .block_uslugi {
+		width: 31.55%;
+		margin: 0 2% 30px 0;
+	}
+
+	#content_index #uslugi_box_index .box:nth-child(2n),
+	#content_index #uslugi .block_uslugi:nth-child(2n),
+	#uslugi .block_uslugi:nth-child(2n) {
+		margin-right: 2%;
+	}
+
+	#content_index #uslugi_box_index .box:nth-child(3n),
+	#content_index #uslugi .block_uslugi:nth-child(3n),
+	#uslugi .block_uslugi:nth-child(3n) {
+		margin-right: 0;
+	}
+
+}
+
+@media screen and (max-width: 991px) {
+
+	#header_text,
+	#block_company {
+		display: none;
+	}
+
+	#catalog_element .pr-rowprop {
+		width: 100%;
+		box-sizing: border-box;
+		margin-left: 0;
+	}
+
+}
+
+@media screen and (max-width: 768px) {
+	
+	#header_top,
+	#header,
+	#top_menu,
+	#footer_top, 
+	#footer_bottom, 
+	#footer_center {
+		width: 100%;
+		min-width: 100%;
+	}
+	
+	#header_top_main,
+	#header_main, 
+	#top_menu_main,
+	#wrapper,
+	#footer_top_main, 
+	#footer_bottom_main, 
+	#footer_center_main {
+		max-width: 100%;
+		min-width: 100%;
+		height: auto;
+		padding: 0;
+		margin: 0;
+	}
+	
+	#header_top_search,
+	#header_text,
+	#block_company,
+	#sidebar {
+		display: none;
+	}
+	
+	
+	/* HEADER */
+
+	#header_time {
+		text-align: right;
+	}
+	
+	#header_top_address,
+	#header_top_email,
+	#header_logo,
+	#header_contact,
+	#header_zayavka {
+		margin: 0;
+		padding: 0;
+		height: auto;
+		text-align: center;
+		margin: 30px 20px 0px 10px;
+	}
+	
+	#header_top{
+		margin-bottom: 10px;
+	}
+	
+	#header_top_address {
+		margin: 10px 0 10px 0;
+	}
+	
+	#header_top_email {
+		margin: 0 0 10px;
+	}
+	
+	#header_logo {
+		margin: 34px 20px auto;
+		overflow: hidden;
+		display: inline-block;
+	}
+	
+	#header_logo_name {
+		padding: 5px 0 0 10px;
+	}
+	
+	#header_callback {
+		margin-bottom: 30px;
+	}
+	
+	#header_contact {
+		margin-bottom: 30px;
+		display: block;
+
+	}
+
+	
+	#header_zayavka a {
+		margin: 0 auto 30px auto;
+	}
+
+	/* TOP MENU */
+
+	#top_menu ul li:hover {
+		background: rgba(0, 0, 0, 0.1) !important;
+	}
+	
+	#breadcrumb {
+		margin: 20px 0 10px 10px;
+		line-height: 150%;
+	}
+	
+	#breadcrumb ul li:last-child {
+		line-height: 1.8;
+	}
+
+	/* SLIDER */
+
+	#slider {
+		height: 350px;
+	}
+
+	.owl-theme {
+		height: 350px;
+	}
+
+	.owl-theme .slideblock {
+		height: 350px;	
+	}
+	
+	.owl-theme .slidetext {
+		left: 0;
+		text-align: center;
+		position: relative;
+		top: 0;
+		width: 100%;
+		height: 350px;
+		padding: 0;
+	}
+
+	.owl-theme .slidetexthd {
+		font-size: 1.5em;
+		padding-top: 80px;
+		margin-bottom: 5px;
+	}
+
+	.owl-theme .slidetextdesc {
+		font-size: 1.5em;
+		margin-bottom: 35px;
+	}
+
+	.owl-theme .owl-nav {
+		display: none;
+	}
+	
+	/* WRAPPER */
+	
+	#wrapper {
+		min-height: auto;
+		padding: 0;
+	}
+	
+	#wrapper .otstup_index {
+		display: none;
+	}
+	
+	/* SIDEBAR */
+	
+	#sidebar {
+		float: none;
+		width: 100%;
+		text-align: center;
+	}
+	
+	#sidebar_menu_title {
+		display: none;
+	}
+	
+	#sidebar_menu ul {
+		margin: 0;
+	}
+	
+	#sidebar_menu ul li a {
+		padding: 15px 0;		
+	}
+	
+	#sidebar_fixed, 
+	.sticky-wrapper,
+	#top_search,
+	#sidebar_otzyv_block,
+	#sidebar_photo_block {
+		display: none;
+	}
+	
+	/* CONTENT */
+	
+	#content,
+	#content_index {
+		margin: 0;
+		padding: 20px 3%;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	
+	#content td, #content th {
+		border: 0;
+		padding: 15px 1%;
+	}
+	
+	#content th {
+		padding: 15px 2%;
+	}
+	
+	#content table td:first-child {
+		padding-left: 2%;
+	}
+	
+	/*FOOTER*/
+
+	#footer {
+		text-align: center;
+	}
+
+	#footer .title {
+		margin: 40px 0 20px 0;
+	}
+
+	#footer_top_main {
+		padding: 35px 10px;
+	}
+
+	#footer_top_main .kontakty {
+		float: none;
+		width: 100%;
+		padding-right: 5px;
+		overflow: hidden;
+	}
+
+	#footer_top_main .company,
+	#footer_top_main .proekty,
+	#footer_top_main .dopmenu {
+		float: none;
+		width: 100%;
+		padding: 0 5px;
+	}
+
+	#footer_nomer {
+		font-size: 1.7em;
+		margin-bottom: 30px;
+	}
+
+	#footer_callback {
+		margin-bottom: 30px;
+	}
+
+	#footer_callback a {
+		padding: 6px 10px;
+	}
+
+	#footer_email {
+		font-size: 1em;
+		margin-bottom: 10px;
+	}
+
+	#footer_address {
+		font-size: 1em;
+		margin-bottom: 30px;
+	}
+
+	#footer_top_main .fa {
+		margin-right: 3px;
+	}
+
+	#footer_menu ul li {
+		padding: 0 0 10px 0;
+	}
+
+	#footer_bottom_main {
+		padding: 30px 10px;
+	}
+
+	#footer_social {
+		float: none;
+		width: 190px;
+		margin: 0 auto;
+	}
+
+	#footer_copyrait {
+		float: none;
+	}
+
+	#footer_copyrait a {
+		margin-right: 10px;
+	}
+
+	#footer_stat {
+		float: none;
+		margin-right: 50%;
+	}
+
+	#footer_top_main .map_index {
+		display: none;
+	}
+	
+	/* GLAVNAYA STRANICA */
+
+	#content_index #uslugi_box_index .box,
+	#content_index #uslugi .block_uslugi,
+	#uslugi .block_uslugi {
+		width: 48%;
+		margin: 0 3.2% 30px 0;
+	}
+
+	#content_index #uslugi_box_index .box:nth-child(3n),
+	#content_index #uslugi .block_uslugi:nth-child(3n),
+	#uslugi .block_uslugi:nth-child(3n) {
+		margin-right: 3.2%;
+	}
+
+	#content_index #uslugi_box_index .box:nth-child(2n),
+	#content_index #uslugi .block_uslugi:nth-child(2n),
+	#uslugi .block_uslugi:nth-child(2n) {
+		margin-right: 0;
+	}
+
+	/* STRANICA KONTAKTY */
+	
+	#contacts {
+		margin: 10px 0;
+	}
+	
+	#contacts #form_contacts {
+		display: none;
+	}
+	
+	#contacts .left {
+		float: none;
+		width: 100%;
+	}
+	
+}
+
+
+@media screen and (max-width: 767px) {
+
+	/* taby */
+	
+	#content #tabs{
+		display: block;
+		width: 100%;
+	}
+	
+	#content #tabs>ul>li{
+		width: 100%;
+		margin: 0 0 10px 0;
+		padding: 10px 0;
+	}
+
+	#content #tabs>ul>li:hover {
+		border: 0;
+	}
+	
+	#content #tabs>ul:after{
+		height: 0;
+	}
+
+	#footer_menu_main {
+		padding: 10px 0;
+	}
+
+	#footer_menu ul li {
+		display: block;
+	}
+
+	#footer_menu ul li a {
+		padding: 20px;
+	}
+
+	/* GLAVNAYA STRANICA */
+
+	#content_index #uslugi_box_index .box,
+	#content_index #uslugi .block_uslugi,
+	#uslugi .block_uslugi {
+		width: 100%;
+		max-width: 384px;
+		margin: 0 0 30px 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	#content_index #catalog_section_list .box {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+
+	#content_index .news_list .news_item {
+		width: 100%;
+	}
+
+	#content_index .news_list .news_item:nth-child(3n) {
+		margin-right: 2%;
+	}
+
+	/* STRANICA USLUGI */
+
+	#uslugi_box .box {
+		padding: 20px 0;
+	}
+
+	#uslugi_box .box .img {
+		float: none;
+		margin-bottom: 20px;
+	}
+
+	#uslugi_box .box .text {
+		margin-left: 0;
+	}
+	
+	#uslugi {
+		width: 100%;
+		padding: 0 1%;
+	}
+	
+	#uslugi .block_uslugi {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+	
+	/* USLUGI VNUTR */
+	
+	#form_slider_uslugi,
+	#uslugi_detail .img_top .slogan,
+	#uslugi_detail .img_top .bg {
+		display: none;
+	}
+
+	#uslugi_detail .img_top,
+	#uslugi_detail .img_top img {
+		width: 100%;
+		height: auto;
+	}
+
+	#content .carousel_block {
+		margin: 0;
+	}
+	
+	#content .carousel_block {
+		margin: 0;
+	}
+
+	/* STRANICA PROEKTY */
+
+	#proekty_box .box {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+	
+	/* STRANICA PROEKTY */
+
+	#proekty_box .box {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+	
+	#proekty .proekty_block img {
+		float: none;
+		width: 100%;
+		height: auto;
+	}
+	
+	#proekty .proekty_block .text {
+		margin: 0 0 30px 0;
+		display: block;
+	}
+	
+	/* PROEKTY VNUTR */
+	
+	#proekty_top {
+		padding: 0;
+	}
+	
+	#proekty_top img {
+		float: none;
+		width: 100%;
+		height: auto;
+	}
+	
+	#proekty_top .text {
+		width: 100%;
+		margin-left: 0;
+		margin-top: 10px;
+	}
+
+	/* STRANICA PORTFOLIO */
+
+	#portfolio_box .box {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+
+	#portfolio ul li {
+		width: 100%;
+		margin-right: 1.3%;
+	}
+
+	#portfolio ul li:nth-child(3n) {
+		margin-right: 1.3%;
+	}
+
+	/* CATALOG */
+
+	#catalog_section_list .box {
+		width: 100%;
+		margin: 0 0 30px;
+	}
+
+	#catalog_section ul li {
+		width: 100%;
+	}
+
+	#catalog_section ul li:nth-child(3n) {
+		margin-right: 1.3%;
+	}
+
+	#catalog_element .pr-elemleft {
+		margin-bottom: 30px;
+	}
+
+	#catalog_element .pr-elemright {
+		width: 100%;
+	}
+
+	#catalog_element .pr-elemleft {
+		width: 100%;
+	}
+
+	#catalog_element .pr-elemleft {
+		width: 100%;
+	}
+
+	#catalog_element .pr-rowprop .pr-bbb {
+		float: none;
+	}
+	
+	/* STRANICA NEWS */
+	
+	#content .news_list img.preview_picture {
+		float: none;
+		max-width: 100%;
+		width: 100%;
+		height: auto;
+		margin: 0 0 10px;
+	}
+	
+	#content .news_list a.link {
+		display: block;
+		margin: 10px 0 0 0;	
+	}
+	
+	#content .news_list .right_text {
+		float: none;
+		width: 100%;
+	}
+	
+	#content .news_list .block_new p {
+		margin: 0 20px 0 0;
+	}
+
+	/* STRANICA SOTRUDNIKI */
+
+	#sotrudniki .box .img {
+		float: none;
+		width: 180px;
+		margin: 0 auto 20px auto;
+	}
+
+	#sotrudniki .box .text {
+		margin-left: 0;
+		text-align: center;
+	}
+
+	#sertifikaty .box {
+		width: 100%;
+		margin: 0 0 25px 0;
+	}
+	
+}
+
+@media screen and (max-width: 576px) {
+
+	.feedback .files {
+		width: 100%;
+	}
+
+	.feedback .files span {
+		display: none;
+	}
+
+	.feedback .files img {
+		position: static;
+		top: 8px;
+		left: 32px;
+		margin-top: 9px;
+	}
+
+	/* SLIDER */
+
+	#slider {
+		height: 280px;
+	}
+
+	.owl-theme {
+		height: 280px;
+	}
+
+	.owl-theme .slideblock {
+		height: 280px;	
+	}
+	
+	.owl-theme .slidetext {
+		height: 280px;
+	}
+
+	.owl-theme .slidetexthd {
+		padding: 50px 5px 0 5px;
+		font-size: 1.4em;
+	}
+
+	.owl-theme .slidetextdesc {
+		padding: 0 5px;
+		font-size: 1.4em;
+	}
+
+	.owl-theme a.slidetextlink {
+		border: 2px solid #48a216;
+		padding: 5px 13px;
+		font-size: 0.9em;
+		margin-bottom: 25px;
+	}
+
+}
+
+

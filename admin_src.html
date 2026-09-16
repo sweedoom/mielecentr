@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Заявки — ХОЛОД-ОК</title>
+<link rel="icon" href="public/images/icons/favicon.png">
+<meta name="robots" content="noindex,nofollow">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#00966D; --green-d:#0f5132; --bg:#f5f7f6; --card:#fff;
+  --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --new:#2563eb; --work:#d97706; --done:#059669; --cancel:#dc2626;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+
+/* логин */
+.login{max-width:380px;margin:12vh auto;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;padding:32px;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.login h1{font-size:22px;margin-bottom:6px}
+.login p{color:var(--muted);font-size:14px;margin-bottom:22px}
+label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;
+  font-size:14px;font-family:inherit;background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,150,109,.12)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border:0;border-radius:9px;
+  background:var(--green);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--green-d)}
+.btn.ghost{background:#fff;color:#374151;border:1px solid var(--line)}
+.btn.ghost:hover{background:#f3f4f6}
+.btn.danger{background:#fff;color:var(--cancel);border:1px solid #fecaca}
+.btn.danger:hover{background:#fef2f2}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+/* шапка */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:42px;height:42px;border-radius:11px;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
+.brand h1{font-size:19px;font-weight:700}
+.brand small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+
+/* статистика */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.stat b{display:block;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:2px}
+.stat span{font-size:12.5px;color:var(--muted)}
+.stat.today b{color:var(--green)}
+
+/* фильтры */
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.bar .search{flex:1;min-width:220px}
+.filters{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);
+  border-radius:11px;padding:4px}
+.filters button{border:0;background:transparent;padding:8px 14px;border-radius:8px;font-size:13.5px;
+  font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
+.filters button.on{background:var(--green);color:#fff}
+
+/* таблица */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:12px 14px;background:#fafafa;font-size:12px;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid #f1f3f2;vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#f9fbfb}
+.phone{font-weight:700;white-space:nowrap}
+.name{font-weight:600}
+.msg{color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.date{color:var(--muted);font-size:13px;white-space:nowrap}
+.pill{display:inline-block;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill.new{background:#dbeafe;color:var(--new)}
+.pill.work{background:#fef3c7;color:var(--work)}
+.pill.done{background:#d1fae5;color:var(--done)}
+.pill.cancel{background:#fee2e2;color:var(--cancel)}
+.src{font-size:12px;color:var(--muted)}
+
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;font-size:16px;color:var(--text);margin-bottom:6px}
+
+/* модалка */
+.overlay{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:50}
+.overlay.on{display:flex}
+.modal{background:var(--card);border-radius:16px;width:100%;max-width:520px;max-height:88vh;overflow:auto}
+.modal h2{font-size:18px;padding:20px 22px;border-bottom:1px solid var(--line)}
+.modal .body{padding:20px 22px}
+.modal .foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:space-between}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:10px 14px;font-size:14px;margin-bottom:18px}
+.kv span{color:var(--muted)}
+.kv b{font-weight:600;word-break:break-word}
+.field{margin-bottom:14px}
+
+/* тосты */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#111827;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;
+  opacity:0;transition:.28s;z-index:99}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.setup{max-width:640px;margin:8vh auto;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;padding:30px;line-height:1.65}
+.setup h1{font-size:20px;margin-bottom:14px}
+.setup ol{margin-left:20px;font-size:14.5px}
+.setup li{margin-bottom:8px}
+code{background:#f3f4f6;padding:2px 6px;border-radius:5px;font-size:13px}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:720px){.msg{display:none}th:nth-child(5),td:nth-child(5){display:none}}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<div class="overlay" id="ov">
+  <div class="modal">
+    <h2 id="m-title">Заявка</h2>
+    <div class="body" id="m-body"></div>
+    <div class="foot">
+      <button class="btn danger" id="m-del">Удалить</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn ghost" id="m-close">Закрыть</button>
+        <button class="btn" id="m-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var BACKEND = "@LEADS_BACKEND@";
+var SB = {url: atob("@SB_URL_B64@"), key: atob("@SB_KEY_B64@")};
+var ADMIN_PW = "@ADMIN_PW@";
+var PW = sessionStorage.getItem('leads_pw') || '';
+var LEADS = [], FILTER = 'all', QUERY = '';
+
+/* ---------- запросы к хранилищу заявок ---------- */
+function fmtDate(iso){
+  if(!iso) return '';
+  var d = new Date(iso);
+  if(isNaN(d)) return String(iso).replace('T',' ').slice(0,19);
+  function p(n){ return (n<10?'0':'') + n; }
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' +
+         p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+}
+
+function apiSb(p){
+  var h = {apikey: SB.key, Authorization: 'Bearer ' + SB.key,
+           'Content-Type': 'application/json'};
+  var body = {p_password: ADMIN_PW, p_action: p.action};
+  if (p.id) body.p_id = p.id;
+  if (p.value !== undefined) body.p_value = p.value;
+  return fetch(SB.url + '/rest/v1/rpc/admin_leads', {
+    method: 'POST', headers: h, body: JSON.stringify(body)
+  }).then(function(r){
+    return r.json().then(function(d){
+      if(!r.ok || (d && d.ok === false)) throw new Error((d && d.error) || 'Ошибка ' + r.status);
+      return d;
+    });
+  });
+}
+
+function api(params){
+  if (SB.url && SB.key && params.action !== 'ping') return apiSb(params);
+  if (SB.url && SB.key && params.action === 'ping') return Promise.resolve({ok: true});
+  return apiJsonp(params);
+}
+
+/* ---------- JSONP-запрос к бэкенду (работает без CORS) ---------- */
+function apiJsonp(params){
+  return new Promise(function(res, rej){
+    var cb = 'cb' + Date.now() + Math.floor(Math.random()*1000);
+    var q = Object.assign({callback: cb}, params);
+    var s = document.createElement('script');
+    var done = false;
+    window[cb] = function(d){
+      done = true;
+      try{ s.remove(); }catch(e){}
+      delete window[cb];
+      if(d && d.ok) res(d); else rej(new Error((d && d.error) || 'Ошибка запроса'));
+    };
+    s.onerror = function(){ if(!done){ delete window[cb]; rej(new Error('Нет связи с сервером')); } };
+    s.src = BACKEND + '?' + Object.keys(q).map(function(k){
+      return encodeURIComponent(k) + '=' + encodeURIComponent(q[k]);
+    }).join('&');
+    document.head.appendChild(s);
+    setTimeout(function(){ if(!done){ delete window[cb]; rej(new Error('Сервер не ответил')); } }, 20000);
+  });
+}
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._tm); t._tm = setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+
+var STATUS = {
+  'new':    {label:'Новая',    cls:'new'},
+  'work':   {label:'В работе', cls:'work'},
+  'done':   {label:'Закрыта',  cls:'done'},
+  'cancel': {label:'Отказ',    cls:'cancel'}
+};
+
+/* ---------- экраны ---------- */
+function render(){
+  var app = document.getElementById('app');
+
+  var HAS_STORE = !!((SB.url && SB.key) || (BACKEND && BACKEND.trim()));
+  if(!HAS_STORE){
+    app.innerHTML = '<div class="setup"><h1>Раздел временно недоступен</h1>' +
+      '<p>Попробуйте обновить страницу позже.</p></div>';
+    return;
+  }
+
+  if(!PW){ renderLogin(app); return; }
+
+  app.innerHTML =
+    '<div class="wrap">' +
+      '<header>' +
+        '<div class="brand"><div class="logo">ХО</div>' +
+          '<div><h1>Заявки</h1><small>ХОЛОД-ОК · ремонт парогенераторов</small></div></div>' +
+        '<div class="tools">' +
+          '<button class="btn ghost" id="refresh">Обновить</button>' +
+          '<button class="btn ghost" id="csv">CSV</button>' +
+          '<button class="btn ghost" id="out">Выйти</button>' +
+        '</div>' +
+      '</header>' +
+      '<div class="stats" id="stats"></div>' +
+      '<div class="bar">' +
+        '<div class="search"><input id="q" placeholder="Поиск: имя, телефон, сообщение…"></div>' +
+        '<div class="filters" id="filters"></div>' +
+      '</div>' +
+      '<div class="card"><table><thead><tr>' +
+        '<th>Дата</th><th>Телефон</th><th>Имя</th><th>Сообщение</th><th>Источник</th><th>Статус</th>' +
+      '</tr></thead><tbody id="rows"></tbody></table>' +
+      '<div class="empty" id="empty" style="display:none"><b>Заявок нет</b>Пока никто не оставил заявку</div></div>' +
+    '</div>';
+
+  document.getElementById('refresh').onclick = load;
+  document.getElementById('csv').onclick = exportCsv;
+  document.getElementById('out').onclick = function(){
+    sessionStorage.removeItem('leads_pw'); PW = ''; render();
+  };
+  document.getElementById('q').oninput = function(e){ QUERY = e.target.value.toLowerCase(); draw(); };
+  buildFilters();
+  load();
+}
+
+function renderLogin(app){
+  app.innerHTML =
+    '<div class="login"><h1>Вход в админку</h1>' +
+    '<p>Введи пароль администратора</p>' +
+    '<label for="pw">Пароль</label>' +
+    '<input type="password" id="pw" placeholder="••••••••" autofocus>' +
+    '<div style="height:14px"></div>' +
+    '<button class="btn" id="go" style="width:100%;justify-content:center">Войти</button>' +
+    '<div id="err" style="color:#dc2626;font-size:13px;margin-top:12px;display:none"></div></div>';
+  var go = document.getElementById('go'), pw = document.getElementById('pw');
+  pw.onkeydown = function(e){ if(e.key === 'Enter') go.click(); };
+  go.onclick = function(){
+    var v = pw.value.trim(); if(!v) return;
+    if (ADMIN_PW && v !== ADMIN_PW) {
+      var e0 = document.getElementById('err');
+      e0.textContent = 'Неверный пароль'; e0.style.display = 'block';
+      return;
+    }
+    go.disabled = true; go.innerHTML = '<span class="spin"></span> Проверяем';
+    api({action:'list', pw:v}).then(function(){
+      PW = v; sessionStorage.setItem('leads_pw', v); render();
+    }).catch(function(err){
+      go.disabled = false; go.textContent = 'Войти';
+      var e = document.getElementById('err');
+      e.textContent = err.message; e.style.display = 'block';
+    });
+  };
+}
+
+/* ---------- данные ---------- */
+function load(){
+  var r = document.getElementById('refresh');
+  if(r){ r.disabled = true; r.textContent = 'Загрузка…'; }
+  api({action:'list', pw:PW}).then(function(d){
+    LEADS = d.leads || []; draw();
+    if(r){ r.disabled = false; r.textContent = 'Обновить'; }
+  }).catch(function(err){
+    toast(err.message);
+    if(err.message.indexOf('пароль') > -1){ PW=''; sessionStorage.removeItem('leads_pw'); render(); }
+    if(r){ r.disabled = false; r.textContent = 'Обновить'; }
+  });
+}
+
+function buildFilters(){
+  var f = document.getElementById('filters');
+  var items = [['all','Все'],['new','Новые'],['work','В работе'],['done','Закрытые'],['cancel','Отказы']];
+  f.innerHTML = items.map(function(x){
+    return '<button data-f="'+x[0]+'" class="'+(FILTER===x[0]?'on':'')+'">'+x[1]+'</button>';
+  }).join('');
+  f.querySelectorAll('button').forEach(function(b){
+    b.onclick = function(){ FILTER = b.dataset.f; buildFilters(); draw(); };
+  });
+}
+
+function visible(){
+  return LEADS.filter(function(l){
+    if(FILTER !== 'all' && (l.status||'new') !== FILTER) return false;
+    if(!QUERY) return true;
+    return [l.name, l.phone, l.message, l.source, l.comment].join(' ').toLowerCase().indexOf(QUERY) > -1;
+  });
+}
+
+function draw(){
+  var rows = visible();
+  var today = new Date().toISOString().slice(0,10);
+
+  document.getElementById('stats').innerHTML =
+    stat(LEADS.length, 'Всего заявок') +
+    stat(LEADS.filter(function(l){ return (l.status||'new')==='new'; }).length, 'Новых') +
+    stat(LEADS.filter(function(l){ return (l.status||'new')==='work'; }).length, 'В работе') +
+    stat(LEADS.filter(function(l){ return (l.status||'new')==='done'; }).length, 'Закрыто') +
+    stat(LEADS.filter(function(l){ return (l.date||'').indexOf(today)===0; }).length, 'Сегодня', true);
+
+  var tb = document.getElementById('rows');
+  document.getElementById('empty').style.display = rows.length ? 'none' : 'block';
+  tb.innerHTML = rows.map(function(l){
+    var st = STATUS[l.status||'new'] || STATUS['new'];
+    return '<tr data-id="'+l.id+'">' +
+      '<td class="date">'+esc(l.date)+'</td>' +
+      '<td class="phone">'+esc(l.phone)+'</td>' +
+      '<td class="name">'+esc(l.name || '—')+'</td>' +
+      '<td class="msg">'+esc(l.message || '—')+'</td>' +
+      '<td class="src">'+esc(l.source || '')+'</td>' +
+      '<td><span class="pill '+st.cls+'">'+st.label+'</span></td></tr>';
+  }).join('');
+  tb.querySelectorAll('tr').forEach(function(tr){
+    tr.onclick = function(){ openLead(tr.dataset.id); };
+  });
+}
+
+function stat(n, label, isToday){
+  return '<div class="stat'+(isToday?' today':'')+'"><b>'+n+'</b><span>'+label+'</span></div>';
+}
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ---------- карточка заявки ---------- */
+var CURRENT = null;
+function openLead(id){
+  var l = LEADS.filter(function(x){ return String(x.id) === String(id); })[0];
+  if(!l) return;
+  CURRENT = l;
+  document.getElementById('m-body').innerHTML =
+    '<div class="kv">' +
+      '<span>Дата</span><b>'+esc(l.date)+'</b>' +
+      '<span>Телефон</span><b><a href="tel:'+esc(l.phone)+'" style="color:#00966D">'+esc(l.phone)+'</a></b>' +
+      '<span>Имя</span><b>'+esc(l.name || '—')+'</b>' +
+      '<span>Сообщение</span><b>'+esc(l.message || '—')+'</b>' +
+      '<span>Источник</span><b>'+esc(l.source || '—')+'</b>' +
+      '<span>Страница</span><b style="font-size:12px;font-weight:400">'+esc(l.page || '—')+'</b>' +
+      '<span>ID</span><b>'+esc(l.id)+'</b>' +
+    '</div>' +
+    '<div class="field"><label>Статус</label><select id="st">' +
+      Object.keys(STATUS).map(function(k){
+        return '<option value="'+k+'" '+((l.status||'new')===k?'selected':'')+'>'+STATUS[k].label+'</option>';
+      }).join('') + '</select></div>' +
+    '<div class="field"><label>Комментарий</label><textarea id="cm" rows="3">'+
+      esc(l.comment||'')+'</textarea></div>';
+  document.getElementById('ov').classList.add('on');
+}
+
+document.getElementById('m-close').onclick = closeModal;
+document.getElementById('ov').onclick = function(e){ if(e.target === this) closeModal(); };
+function closeModal(){ document.getElementById('ov').classList.remove('on'); CURRENT = null; }
+
+document.getElementById('m-save').onclick = function(){
+  if(!CURRENT) return;
+  var st = document.getElementById('st').value;
+  var cm = document.getElementById('cm').value;
+  var btn = this; btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  Promise.all([
+    api({action:'status', pw:PW, id:CURRENT.id, value:st}),
+    api({action:'comment', pw:PW, id:CURRENT.id, value:cm})
+  ]).then(function(){
+    CURRENT.status = st; CURRENT.comment = cm;
+    toast('Сохранено'); btn.disabled = false; btn.textContent = 'Сохранить';
+    closeModal(); load();
+  }).catch(function(e){
+    toast(e.message); btn.disabled = false; btn.textContent = 'Сохранить';
+  });
+};
+
+document.getElementById('m-del').onclick = function(){
+  if(!CURRENT || !confirm('Удалить заявку?')) return;
+  var id = CURRENT.id;
+  api({action:'delete', pw:PW, id:id}).then(function(){
+    toast('Удалено'); closeModal(); load();
+  }).catch(function(e){ toast(e.message); });
+};
+
+/* ---------- экспорт ---------- */
+function exportCsv(){
+  var rows = visible();
+  if(!rows.length){ toast('Нечего выгружать'); return; }
+  var head = ['Дата','Телефон','Имя','Сообщение','Источник','Статус','Комментарий'];
+  var lines = [head.join(';')];
+  rows.forEach(function(l){
+    lines.push([l.date, l.phone, l.name||'', l.message||'', l.source||'',
+      (STATUS[l.status||'new']||STATUS['new']).label, l.comment||'']
+      .map(function(v){ return '"' + String(v==null?'':v).replace(/"/g,'""') + '"'; }).join(';'));
+  });
+  var blob = new Blob(['\ufeff'+lines.join('\n')], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'zayavki_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  toast('Выгружено: ' + rows.length + ' шт.');
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1241 @@
+/* MAIN */
+
+.mygallery {
+	margin: 25px 0;
+}
+
+.section_desc {
+	margin: 25px 0;
+}
+
+/* tabs */
+
+#content #tabs>ul {
+	margin: 40px 0 20px;
+	border-top: 1px solid #dedede;
+	border-bottom: 1px solid #dedede;
+	box-sizing: border-box;
+}
+
+
+#content #tabs>ul:after {
+	background: none;
+	height: 0;
+}
+
+#content #tabs>ul>li {
+	font-size: 1em;
+	padding: 13px 5%;
+	width: auto;
+	background: #fff;
+	color: #555;
+	border: none;
+	border-radius: 0;
+	text-transform: none;
+}
+
+#content #tabs>ul>li.active, #content #tabs>ul>li.active:hover,
+#content #tabs>ul>li:hover {
+	border: none;
+	border-bottom: 3px solid #48a216;
+	color: #48a216;
+}
+
+@media only screen and (max-width: 768px) {
+    #header_contact {
+        display: none;
+    }
+    .uslugi_index {
+	  margin-top: 0px;
+	}
+}
+
+/* GLAVNAYA STRANICA */
+
+/* content */
+
+#content_index {
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+#content_index h1 {
+	font-size: 1.9em;
+	margin: 0 0 22px 0;
+}
+
+#content_index h2 {
+	font-size: 2em;
+	margin: 0 0 30px 0;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #e0e0e0;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+#content_index h3 {
+	font-size: 1.3em;
+	margin: 27px 0 10px 0;
+}
+
+#content_index h4 {
+	font-size: 1.14em;
+	margin: 27px 0 10px 0;
+}
+
+#content_index h5 {
+	font-size: 1em;
+	font-weight: bold;
+}
+
+#content_index p,
+#content_index ul,
+#content_index ol {
+	color: #404040;
+}
+
+#content_index p {
+	line-height: 1.5;
+	margin: 0 0 10px 0;
+}
+
+#content_index table {
+	width: 100%;
+	border: 1px solid #dedede;
+	font-size: 0.9em;
+	margin: 20px 0;
+}
+
+#content_index td, #content_index th {
+	border: 0;
+	padding: 15px 5px;
+	text-align: center;
+	border: 1px solid #dedede;
+}
+
+#content_index th {
+	text-transform: uppercase;
+	padding: 15px 5px;
+	background: #f7f7f7;
+	font-size: 0.9em;
+	font-weight: 600;
+}
+
+#content_index tr {
+	background: #fff;
+}
+
+#content_index table td:first-child {
+	text-align: left;
+	padding-left: 24px;
+}
+
+#content_index table tr:nth-child(odd) {
+	background: #fcfcfc;
+}
+
+#content_index ul, #content_index ol {
+	margin: 10px 0 20px 5%;
+}
+
+#content_index ul {
+	list-style: square;
+}
+
+#content_index ol {
+	list-style: decimal;
+}
+
+#content_index ul li, #content_index ol li {
+	line-height: 1.5;
+}
+
+#content_index a {
+	text-decoration: underline;
+}
+
+#content_index a:hover {
+	text-decoration: none;
+}
+
+#content_index img {
+	max-width: 100%;
+	height: auto;
+}
+
+#content_index b, #content_index strong {
+	font-weight: 600;
+}
+
+#content_index sup {
+	position: relative;
+	top: -0.5em;
+}
+
+#content_index sub {
+	position: relative;
+	top: 0.5em;
+}
+
+#content_index a.link_all {
+	display: block;
+	width: 150px;
+	text-align: center;
+	padding: 15px;
+	margin: 10px auto 0 auto;
+	border: 1px solid;
+	border-radius: 4px;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-size: 0.9em;
+	font-weight: 600;
+}
+
+#content_index a.link_all:hover {
+	opacity: 0.8;
+}
+
+/* uslugi */
+
+.uslugi_index {
+	overflow: hidden;
+	margin-top: 100px;
+}
+
+#uslugi_box_index .box {
+	width: 31.69%; 
+	vertical-align: top;
+	display: inline-block;
+	margin: 0 2% 30px 0; 
+	border: 5px solid #f7f7f7;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+#uslugi_box_index .box:nth-child(3n) {
+	margin-right: 0;
+}
+
+#uslugi_box_index .img {
+	line-height: 0;
+}
+
+#uslugi_box_index .img img {
+	width: 100%;
+	height: auto;
+	padding-bottom: 1px;
+	border-bottom: 3px solid #48a216;
+}
+
+#uslugi_box_index .img img:hover {
+	opacity: 0.8;
+}
+
+#uslugi_box_index .text {
+	padding: 20px;
+}
+
+#uslugi_box_index .text h2 {
+	font-size: 1.1em;
+	margin: 0 0 15px 0;
+}
+
+#uslugi_box_index .text h2 a {
+	color: #000;
+	font-size: 1.3em;
+}
+
+#uslugi_box_index .text .title {
+	margin: 0 0 10px 0;
+}
+
+#uslugi_box_index .text .title a {
+	margin: 0;
+	font-size: 1.2em;
+	color: #000;
+}
+
+#uslugi_box_index .text title a:hover {
+	opacity: 0.8;
+}
+
+#uslugi_box_index .text,
+#uslugi_box_index .text p {
+	margin: 0;
+	font-size: 0.9em;
+}
+
+#uslugi_box_index .text a {
+	margin-right: 15px;
+	font-size: 0.9em;
+}
+
+#uslugi_box_index .text ul {
+	margin: 0 0 0 20px;
+}
+
+/* popul uslugi */
+
+.uslugi_pop_index {
+	overflow: hidden;
+	margin-bottom: 90px;
+}
+
+#content_index #uslugi .block_uslugi {
+	width: 31.6%; 
+	vertical-align: top;
+	display: inline-block;
+	margin: 0 2% 30px 0; 
+	border: 5px solid #f7f7f7;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+#content_index #uslugi .block_uslugi:nth-child(3n) {
+	margin-right: 0;
+}
+
+/* catalog */
+
+#content_index #catalog_section_list {
+	overflow: hidden;
+	margin-bottom: 50px;
+}
+
+#content_index #catalog_section_list .box {
+	min-height: 180px;
+}
+
+/* portfolio */
+
+.portfolio_index {
+	overflow: hidden;
+	margin-bottom: 90px;
+}
+
+#index_photo {
+	padding: 8px 45px 10px 40px;
+	overflow: hidden;
+	margin-bottom: 30px;
+}
+
+#index_photo div {
+	margin: 1px;
+	width: 100%;
+	max-height: 215px;
+}
+
+#index_photo img:hover {
+	opacity: 0.8;
+}
+
+#index_photo .prevarr, #index_photo .nextarr {
+	font-size: 2.2em;
+	color: #48a216;
+}
+
+#index_photo .prevarr:hover, #index_photo .nextarr:hover {
+	opacity: 0.9;
+}
+
+#index_photo {
+	position: relative;
+}
+
+#index_photo .nextarr {
+	position: absolute;
+	bottom: 40%;
+	right: 8px;
+	cursor: pointer;
+}
+
+#index_photo .prevarr {
+	position: absolute;
+	bottom: 40%;
+	left: 8px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+/* proekty */
+
+.proekty_index {
+	overflow: hidden;
+	margin-bottom: 90px;
+}
+
+#content_index .news_list .news_item {
+	display: inline-block;
+	vertical-align: top;
+	width: 23.1%;
+	max-width: 255px;
+	margin-right: 2%;
+}
+
+#content_index .news_list .news_item:last-child {
+	margin-right: 0;
+}
+
+#content_index .news_list .news_item img {
+	width: 100%;
+}
+
+#content_index .news_list .news_item .news-date-time {
+	display: block;
+}
+
+#content_index .news_list .news_item .right_text {
+	font-size: 0.9em;
+}
+
+#content_index .news_list .news_item a.button {
+	display: none;
+}
+
+#content_index .news_list .news_item a {
+	color: #000;
+}
+
+/* text */
+
+#content_index .text_index,
+#content .index_plus {
+	margin: 30px 0;
+}
+
+#content_index .index_plus_block,
+#content .index_plus_block  {
+	margin: 20px 0 25px;
+}
+
+#content_index .index_plus_block .left,
+#content .index_plus_block .left {
+	float: left;
+}
+
+#content_index .index_plus_block .block,
+#content .index_plus_block .block {
+	margin-left: 55px;
+}
+
+#content_index .index_plus .fa,
+#content .index_plus .fa {
+	margin: 3px 0 0 10px;
+	font-size: 2.5em;
+	color: #48a216;
+}
+
+#content_index .index_plus .title,
+#content .index_plus .title {
+	font-size: 1.1em;
+	margin-bottom: 0;
+}
+
+#content_index .index_plus .text,
+#content .index_plus .text {
+	font-size: 1em;
+	margin-bottom: 0;
+}
+
+#content_index ol.index_zakaz,
+#content ol.index_zakaz {
+	margin: 20px 0 30px;
+	counter-reset: myCounter;
+}
+
+#content_index ol.index_zakaz li,
+#content ol.index_zakaz li {
+	list-style: none;
+}
+
+#content_index ol.index_zakaz li:before,
+#content ol.index_zakaz li:before {
+	counter-increment: myCounter;
+	content:counter(myCounter);
+	color: white;
+	background: #48a216;
+	display: inline-block;
+	text-align: center;
+	margin: 5px 10px;
+	line-height: 37px;
+	width: 37px;
+	height: 37px;
+	font-size: 1.2em;
+}
+
+#content_index  #form_vopros .text .title {
+	font-size: 1.8em;
+}
+
+#content_index #form_vopros {
+	background: #fff !important;
+	padding: 50px 8%;
+}
+
+#content_index #form_vopros .prorab img {
+	width: 170px;
+}
+
+/* partnery */
+
+.partnery_index {
+	margin-top: 90px;
+}
+
+#index_partnery {
+	padding: 10px 40px;
+	margin: 20px 0 0 0;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+#index_partnery .box {
+	margin: 4px;
+	width: 100%;
+	max-height: 215px;
+	border: 1px solid #ececec;
+}
+
+#index_partnery img:hover {
+	opacity: 0.8;
+}
+
+#index_partnery .prevarr, #index_partnery .nextarr {
+	font-size: 2em;
+	color: #ccc;
+}
+
+#index_partnery .prevarr:hover, #index_partnery .nextarr:hover {
+	color: #aeaeae;
+}
+
+#index_partnery {
+	position: relative;
+}
+
+#index_partnery .nextarr {
+	position: absolute;
+	bottom: 40%;
+	right: 8px;
+	cursor: pointer;
+}
+
+#index_partnery .prevarr {
+	position: absolute;
+	bottom: 40%;
+	left: 8px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+/* STRANICA PROEKTY */
+
+#proekty_box .box {
+	display: inline-block;
+	vertical-align: top;
+	width: 48%; 
+	max-width: 384px;
+	margin: 0 3.3% 30px 0; 
+}
+
+#proekty_box .box:nth-child(2n) {
+	margin-right: 0;
+}
+
+#proekty_box .box .img {
+	margin-bottom: 10px;
+}
+
+#proekty_box .box .text {
+	text-align: center;
+}
+
+#proekty_box .box .text .title a {
+	font-size: 0.95em;
+	font-weight: 600;
+}
+
+#proekty_box .box .text .desc {
+	margin-top: 10px;
+	font-size: 0.9em;
+}
+
+/* STRANICA PROEKTY VNUTR */
+
+#proekty .img {
+	margin-bottom: 10px;
+}
+
+#proekty .prev_text {
+	padding: 0 10px 20px 10px;
+	font-weight: 600;
+	border-bottom: 3px solid #f7f7f7;
+}
+
+/* STRANICA AKCII */
+
+#content .block_promo {
+	width: 100%;
+	max-width: 700px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0 15px 10px -14px #9d9cab;
+	margin: 0 auto 50px auto;
+	padding-bottom: 10px;
+}
+
+#content .block_promo img {
+	width: 100%;
+	height: auto;
+}
+
+#content .block_promo_text_1 {
+	padding: 5px 20px 10px 20px;
+	font-style: italic;
+	font-size: 0.8em;
+	color: #666666;
+}
+
+#content .block_promo_text_2 {
+	padding: 0 20px 10px 20px;
+	font-size: 1.2em;
+}
+
+#content .block_promo_text_2 p {
+	margin: 10px 0 0 0;
+	color: #000;
+	font-size: 0.7em;
+}
+
+#content .img_action img {
+	width: 100%;
+	max-width: 800px;
+	height: auto;
+	margin-bottom: 30px;
+}
+
+#content .block_promo_text_3 {
+	padding: 0 20px;
+	font-size: 0.9em;
+}
+
+/* STRANICA USLUGI SECTIONS */
+
+#uslugi_box .box {
+	overflow: hidden;
+	padding: 40px 0;
+	border-bottom: 1px solid #f2f2f2;
+}
+
+#uslugi_box .box .img {
+	float: left;
+}
+
+#uslugi_box .box .text {
+	margin-left: 300px;
+}
+
+#uslugi_box .box .text .title {
+	margin-bottom: 15px;
+}
+
+#uslugi_box .box .text .title a {
+	color: #000;
+	font-size: 1.2em;
+}
+
+#uslugi_box .box .text .class_p {
+	margin-bottom: 15px;
+}
+
+#uslugi_box .box .text .class_p,
+#uslugi_box .box .text .class_p p {
+	font-size: 0.9em;
+}
+
+#uslugi_box .box .text .class_p p {
+	margin: 0;
+}
+
+#uslugi_box .box .text .class_a a {
+	font-size: 0.9em;
+}
+
+/* STRANICA USLUGI */
+
+#uslugi .block_uslugi {
+	display: inline-block;
+	vertical-align: top;
+	width: 48%;
+	max-width: 384px;
+	margin: 0 3.3% 30px 0;
+	vertical-align: top;
+	border: 5px solid #f7f7f7;
+	border-radius: 4px;
+	background: #fff;	
+	text-align: center;
+	box-sizing: border-box;
+}
+
+#uslugi .block_uslugi:nth-child(2n) {
+	margin-right: 0;
+}
+
+#uslugi .block_uslugi img {
+	width: 100%;
+	height: auto;
+	margin-bottom: 10px;
+	padding-bottom: 1px;
+	border-bottom: 1px solid #333;
+}
+
+#uslugi .block_uslugi img:hover {
+	opacity: 0.8;	
+}
+
+#uslugi .block_uslugi_title {
+	margin-bottom: 10px;
+	font-size: 1em;
+	font-weight: 600;
+}
+
+#uslugi .block_uslugi_title a {
+	color: #000;
+}
+
+
+#uslugi .block_uslugi_title a:hover {
+	opacity: 0.8;
+}
+
+#uslugi .block_uslugi_price {
+	line-height: 1.3;
+	color: #000;
+}
+
+#uslugi .block_uslugi_price span {
+	font-size: 1.6em;
+}
+
+#uslugi .block_uslugi_button {
+	margin: 30px 0;
+}
+
+#uslugi .block_uslugi_button a.button {
+	padding: 10px 25px;
+	font-size: 0.9em;
+}
+
+/* USLUGI VNUTR */
+
+/* img-top */
+
+#uslugi_detail .img_top {
+	position: relative;
+	margin-bottom: 30px;
+	max-width: 800px;
+	height: 340px;
+}
+
+#uslugi_detail .img_top img {
+	max-width: 800px;
+	width: 100%;
+	height: 340px;
+	border: 1px solid #ececec; 
+}
+
+#uslugi_detail .img_top  #form_slider_uslugi {
+	position: absolute;
+	top: 30px;
+	right: 7%;
+	z-index: 5;
+}
+
+#uslugi_detail .img_top .slogan {
+	position: absolute;
+	top: 70px;
+	left: 7%;
+	color: #fff;
+	font-size: 2.5em;
+	width: 40%;
+	z-index: 2;
+}
+
+#uslugi_detail .img_top .bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.4);
+	z-index: 1;
+}
+
+/* nashi raboty */
+
+#carousel_photo {
+	margin: 20px 0 30px;
+	padding: 8px 45px 10px 40px;
+	border: 1px solid #eee;
+	background: #f7f7f7;
+	border-radius: 7px;
+}
+
+#carousel_photo div {
+	margin: 1px;
+	width: 100%;
+	max-height: 170px;
+}
+
+#carousel_photo img:hover {
+	opacity: 0.8;
+}
+
+#carousel_photo .prevarr, #carousel_photo .nextarr {
+	font-size: 2em;
+	color: #999;
+}
+
+#carousel_photo .prevarr:hover, #carousel_photo .nextarr:hover {
+	color: #444;
+}
+
+#carousel_photo {
+	position: relative;
+}
+
+#carousel_photo .nextarr {
+	position: absolute;
+	bottom: 40%;
+	right: 8px;
+	cursor: pointer;
+}
+
+#carousel_photo .prevarr {
+	position: absolute;
+	bottom: 40%;
+	left: 8px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+/* STRANICA CENY */
+
+#content .accordion h2 {
+	font-size: 1.2em;
+	margin: 0;
+	background: #48a216;
+}
+
+#content .accordion h2:hover {
+	opacity: 0.9;
+}
+
+#content .accordion table {
+	font-size: 0.9em;
+	margin: 0;
+}
+
+#content .accordion table th {
+	background: #f7f7f7;
+	color: #000;
+	font-size: 0.9em;
+}
+
+#content .accordion table td:first-child,
+#content table.table_price td:first-child {
+	width: 60%;
+}
+
+#content .prais_print {
+	margin: 20px 0 20px 10px;
+}
+
+#content  .prais_print a {
+	padding: 5px 15px;
+	background: #48a216;
+	color: #fff;
+	text-transform: uppercase;
+	text-decoration: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+#content  .prais_print a:hover {
+	opacity: 0.8;
+}
+
+#content .prais_print .fa {
+	font-size: 1.1em;
+	margin: 0 10px 0 0;
+}
+
+/* STRANICA PORTFOLIO SECTIONS */
+
+#portfolio_box .box {
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	width: 48%; 
+	max-width: 384px;
+	height: auto;
+	margin: 0 3.3% 30px 0; 
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: 0 15px 10px -14px #9d9cab;
+	box-sizing: border-box;
+}
+
+#portfolio_box .box:nth-child(2n) {
+	margin-right: 0;
+}
+
+#portfolio_box .img {
+	line-height: 0;
+}
+
+#portfolio_box .img img {
+	width: 100%;
+	height: auto;
+}
+
+#portfolio_box .img img:hover {
+	opacity: 0.8;
+}
+
+#portfolio_box h2 {
+	margin: 0;
+}
+
+#portfolio_box h2 a {
+	position: absolute;
+	left: 10px;
+	bottom: 13%;
+	display: block;
+	padding: 8px 15px;
+	background: #48a216;
+	color: #fff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 0.7em;
+	text-transform: uppercase;
+	opacity: 0.9;
+}
+
+#portfolio_box h2 a:hover {
+	opacity: 1;
+}
+
+/* STRANICA PORTFOLIO */
+
+#portfolio {
+	margin-top: 20px;
+}
+
+#portfolio ul {
+	list-style: none;
+	margin:0;
+	padding: 0;
+}
+
+#portfolio ul li {
+	display: inline-block;
+	vertical-align: top;
+	width: 32%;
+	max-width: 255px;
+	height: auto;
+	margin: 0 1.4% 30px 0;
+	text-align: center;
+}
+
+#portfolio ul li:nth-child(3n) {
+	margin-right: 0;
+}
+
+#portfolio .title a {
+	font-size: 0.9em;
+	font-weight: 600;
+}
+
+#portfolio .block_promo_img img {
+	width: 100%;
+	max-width: 255px;
+	line-height: 0;
+}
+
+#portfolio img:hover {
+	opacity: 0.8;
+}
+
+/* PORTFOLIO VNUTRENNIE STRANICY */
+
+#portfolio_photo .fotogallery_block {
+	margin: 20px 0;
+	overflow: hidden;
+}
+
+#portfolio_photo .fotogallery_block ul {
+	list-style: none;
+	margin:0;
+	padding: 0;
+}
+
+#portfolio_photo .fotogallery_block ul  li {
+	float: left;
+	width: 195px;
+	height: 140px;
+	margin: 2px;
+	overflow: hidden;
+}
+
+/* STRANICA KONTAKTY */
+
+#contacts {
+	margin: 50px 0 50px;
+	overflow: hidden;
+}
+
+#contacts .left {
+	float: left;
+	width: 43%;
+	margin-right: 20px;
+}
+
+#contacts .left .fa {
+	font-size: 2em;
+	color: #48a216;
+	margin-right: 15px;
+	width: 30px;
+}
+
+#contacts .left  p {
+	margin-bottom: 20px;
+}
+
+#contacts .left  p>span {
+	font-weight: 600;
+}
+
+#contacts .left  p>i {
+	float: left;
+}
+
+#contacts .right {
+	float: left;
+	width: 45%;
+}
+
+/* STRANICA NEWS */
+
+#content .news_list .block_new {
+	overflow: hidden;
+	padding: 30px 0 30px 20px;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #ccc;
+}
+
+#content .news_list img.preview_picture {
+	border: 4px solid #fff;
+	box-shadow: 0px 0px 5px 0px #ccc;
+	border-radius: 2px;
+	width: 38%;
+	max-width: 300px;
+	height: auto;
+	margin: 0 15px 0 0;
+}
+
+#content .news_list a.link {
+	margin-bottom: 10px;
+	font-size: 1.1em;
+}
+
+#content .news_list .block_new p {
+	margin: 7px 20px 0 0;
+}
+
+#content .news_list .block_new {
+	margin: 7px 20px 0 0;
+	line-height: 1.5;
+	margin: 0 0 10px 0;
+	color: #404040;
+}
+
+#content .news_list .right_text {
+	float: left;
+	width: 60%;
+}
+
+#content .news_detail .img_top {
+	margin-bottom: 30px;	
+}
+
+/* share */
+
+#content .block_friends {
+	margin: 15px 0 0 0;
+	border-top: 1px solid #ccc;
+}
+
+/* STRANICA OTZYVY */
+
+#content .top {
+	margin: 0 0 40px;
+}
+
+#otzyv .block {
+	padding: 15px;
+	border-radius: 4px;
+	border: 1px dashed #ccc;
+	margin: 0 0 30px;
+	line-height: 1.5;
+	margin: 0 0 10px 0;
+	color: #404040;
+}
+
+#otzyv .name_date {
+	margin: 0 0 10px;
+}
+
+#otzyv .name {
+	font-weight: 600;
+	margin-right: 20px;
+}
+
+#otzyv .date {
+	font-style: italic;
+}
+
+/* STRANICA REKVIZITY */
+
+#content table.table_rekvizity td {
+	padding-left: 20px;
+	text-align: left;
+}
+
+/* STRANICA SERTIFIKATY */
+
+#sertifikaty {
+	margin: 40px 0 0;
+}
+
+#sertifikaty .box {
+	display: inline-block;
+	vertical-align: top;
+	width: 30%;
+	margin: 0 2.9% 25px 0;
+}
+
+/* STRANICA VIDEO */
+
+#content .video {
+	position:relative;
+	padding-bottom:56.25%;
+	padding-top:30px;
+	height:0;
+	overflow:hidden;
+	border:1px solid #ccc;
+	margin: 20px 0;
+}
+
+#content .video iframe {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+
+/* STRANICA SOTRUDNIKI */
+
+#sotrudniki {
+	margin: 20px 0 0;
+}
+
+#sotrudniki .box {
+	overflow: hidden;
+	padding: 50px 0;
+	border-bottom: 1px solid #f2f2f2;
+}
+
+#sotrudniki .box .img {
+	float: left;
+	margin-left: 20px;
+}
+
+#sotrudniki .box .text {
+	margin-left: 240px;
+	color: #404040;
+}
+
+#sotrudniki .box .text .fa {
+	color: #ccc;
+	margin-right: 5px;
+}
+
+#sotrudniki .box .name {
+	font-size: 1.2em;
+	margin-bottom: 5px;
+}
+
+#sotrudniki .box .position {
+	font-size: 1em;
+	color: #999;
+	margin-bottom: 20px;
+}
+
+#sotrudniki .box .description {
+	font-size: 0.9em;
+	margin-bottom: 20px;
+}
+
+#sotrudniki .box .email {
+	margin-bottom: 5px;
+}
+
+/* STRANICA SITEMAP */
+
+#content .sitemap table {
+	background: #fff;
+	border: 0;
+}
+
+#content .sitemap table td, 
+#content .sitemap table th {
+	text-align: left;
+	background: #fff;
+	border: 0;
+}
+
+/* link back infoblock */
+
+#content .link_back {
+	margin-top: 30px;	
+}
+
+#content .link_back .fa {
+	margin-right: 30px;
+	width: 30px;
+	height: 30px;
+	line-height: 31px;
+	color: #fff;
+	background: #48a216;
+	border-radius: 4px;
+	padding-right: 2px;
+	margin-right: 10px;
+	text-align: center;  
+}
+
+#content .link_back a {
+	text-decoration: none;
+}
+
+#content .link_back a:hover {
+	opacity: 0.8;
+}
+
+@media only screen and (max-width: 768px) {
+    .uslugi_index {
+	  margin-top: 0px;
+	}
+}

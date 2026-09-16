@@ -1,0 +1,48 @@
+#tabs{
+	display: inline-block;
+	width: 100%;
+}
+
+#tabs > div{
+	padding-top: 10px;
+}
+
+#content #tabs>ul{
+	margin: 0px;
+	padding: 0px;
+}
+
+#tabs>ul:after{
+	content: "";
+	display: block;
+	clear: both;
+	height: 7px;
+	background: #9d9cab;
+}
+
+#tabs>ul>li{
+	width: 23%;
+	margin: 0 0 0 10px;
+	padding: 0;
+	cursor: pointer;
+	display: block;
+	float: left;
+	padding: 10px 0;
+	background: #e5e5e5;
+	color: #000;
+	text-align: center;
+	font-size: 1em;
+	font-weight: 600;
+	border-bottom: 0;
+	border-radius: 4px 4px 0 0;
+}
+
+#tabs>ul>li:first-child {
+	margin-left: 0 !important;
+}
+
+#tabs>ul>li.active, #tabs>ul>li.active:hover{
+	background: #9d9cab;
+	color: #fff;
+	border-bottom: 0;
+}

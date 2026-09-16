@@ -1,0 +1,123 @@
+#header .head_slide {
+	left: 0;
+	margin: 0;
+	position: fixed;
+	right: 0;
+	top: -50px;
+	height: 40px;
+	width: 100%;
+	z-index: 1000;
+	
+	background-color: #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+	-webkit-transition: top 0.7s ease;
+}
+
+#header .hdslide_inn {
+	margin: 0 auto;
+	max-width: 1130px;
+	padding: 0 10px;
+}
+
+#header .hdslide_home {
+  float: left;
+  color: #fff;
+}
+
+#header .hdslide_home .fa {
+   padding: 6px 10px;
+  font-size: 1.8em;
+  color: #fff;
+}
+
+#header .hdslide_logo {
+	float: left;
+	font-family: Play;
+	font-size: 1.2em;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+#header .hdslide_logo:hover {
+	opacity: 0.7;
+}
+
+#header .hdslide_logo_slogan {
+    display: block;
+    font-size: 0.6em;
+    color: #000;
+}
+
+#header .hdslide_contact {
+	float: right;
+	margin: 10px 20px 0 0;
+	text-align: right;
+}
+
+#header .hdslide_contact_nomer {
+    font-size: 1.2em;
+}
+
+#header .header_nomer_2 {
+    margin-left: 10px;
+}
+
+#header .hdslide_contact_callback,
+#header .hdslide_contact_zayvka {
+	float: right;
+	margin: 0;
+}
+
+#header .hdslide_contact_callback a,
+#header .hdslide_contact_zayvka a {
+	display: block;
+	padding: 11px 13px 12px 13px;
+    cursor: pointer;
+    text-decoration: none;
+	text-transform: uppercase;
+	font-size: 0.9em;
+	color: #fff;
+	border-right: 1px solid #eee;
+}
+
+#header .hdslide_contact_callback a {
+	background-color: #fc0204;
+}
+
+#header .hdslide_contact_zayvka a {
+	background-color: #fc0204;
+}
+
+#header .hdslide_contact_callback a:hover,
+#header .hdslide_contact_zayvka a:hover {
+	opacity: 0.9;
+}
+
+#header .hdslide_contact_email {
+    float: right;
+    margin: 11px 3% 0 0;
+}
+
+#header .hdslide_contact_email a {
+	color: #000;
+} 
+
+@media (max-width: 1024px) {
+	#header .hdslide_contact_email {
+    display: none;
+	}
+}
+
+@media (max-width: 890px) {
+	#header .hdslide_contact_email,
+	#header .hdslide_contact_zayvka {
+    display: none;
+	}
+}
+
+@media (max-width: 768px) {
+	#header .head_slide {
+		display: none;
+	}
+}

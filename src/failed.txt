@@ -1,0 +1,3 @@
+https://msk.mielecentr.ru/bitrix/js/ui/polyfill/closest/js/closest.js
+https://msk.mielecentr.ru/bitrix/templates/gvozdevsoft_master_s1/lib/owl-carousel-2/css/owl.video.play.png
+https://msk.mielecentr.ru/upload/resize_cache/iblock/cdc/382_170_2/lgy904yu83bb1n4tyrd7myy8m473niya.jpg

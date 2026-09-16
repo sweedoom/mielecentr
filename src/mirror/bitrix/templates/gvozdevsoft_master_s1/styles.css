@@ -1,0 +1,10 @@
+#flvmenu > ul > li ul li {min-width:325px;}
+@media screen and (max-width: 768px) {
+    #header_contact {
+        margin-bottom: 30px;
+        display: block;
+        float: none;
+        font-size: 0.8rem;
+        text-align: right;
+    }
+}

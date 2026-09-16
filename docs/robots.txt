@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin-a7f3c9.html
+Disallow: /bitrix/
+Disallow: /upload/
+
+Sitemap: https://sweedoom.github.io/mielecentr/sitemap.xml
+Host: https://sweedoom.github.io/mielecentr/

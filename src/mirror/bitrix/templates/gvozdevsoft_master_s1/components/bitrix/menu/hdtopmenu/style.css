@@ -1,0 +1,90 @@
+/* menu */
+
+#header .hdtopmenu {
+	display: block;
+	position: relative;
+	float: left;
+	margin-left: 1px;
+	height: 40px;
+	width: 100px;
+	border-left: 1px solid #ececec;
+	border-right: 1px solid #ececec;
+	background: #fff;
+}
+
+#header .hdtopmenu nav ul {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+}
+
+#header .hdtopmenu nav ul li ul {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 100%;
+}
+
+#header .hdtopmenu ul {
+	background-color: #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.137);
+	z-index: 9999;
+}
+
+#header .hdtopmenu ul li {
+	width: 200px;
+	position: relative;
+}
+
+#header .hdtopmenu ul li a {
+	display: block;
+	padding: 10px 5px 10px 20px;
+	color: #000;
+	font-size: 0.9em;
+	border-bottom: 1px solid #eee;
+	}
+
+#header .hdtopmenu ul li:hover {
+	background-color: #48a216;
+}
+
+#header .hdtopmenu ul li:hover > a {
+	color: #fff;
+}
+
+#header .hdmname {
+	padding-top: 10px;
+	padding-left: 35px;
+	font-size: 1em;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+#header .hdtopmenu:hover nav > ul {
+	display: block;
+}
+
+#header .hdtopmenu nav > ul li:hover ul {
+	display: block;
+}
+
+#header .hdmname::before {
+	position: absolute;
+	font: 0.9em FontAwesome;
+	content: "\f0c9";
+	top: 13px;
+	left: 17px;
+}
+
+#header .head_slide .hdtopmenu .fa {
+	position: absolute;
+	font-size: 1em;
+	color: #000;
+	top: 8px;
+	right: 15px;
+}
+
+#header .hdtopmenu nav > ul li:hover .fa {
+	color: #fff;
+}
