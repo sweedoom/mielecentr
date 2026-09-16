@@ -6,7 +6,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "docs")
 cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
 
-B = cfg["brand"]
+B = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисный центр"
 PHONE = cfg["phonePretty"]
 EMAIL = cfg["email"]
 CITY_N = cfg["city"]["nom"]

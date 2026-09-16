@@ -1,7 +1,7 @@
 {
   "_comment": "ВСЕ ДАННЫЕ САЙТА ЗДЕСЬ. Поменял -> python build.py -> git push. Больше ничего трогать не надо.",
-  "brand": "ХОЛОД-ОК",
-  "brandSlug": "holodok",
+  "brand": "",
+  "brandSlug": "",
   "siteUrl": "https://sweedoom.github.io/mielecentr/",
   "domain": "",
   "_domain_comment": "Свой домен (например miele-remont.ru). Пока пусто - сайт живёт на GitHub Pages",
@@ -76,6 +76,10 @@
   "dropBlocks": [
     "div.b-quizgo-quiz-block"
   ],
+  "dropParagraphs": [
+    "не является официальным"
+  ],
+  "_dropParagraphs_comment": "Абзацы-дисклеймеры, которые вырезаются целиком (ищем по подстроке в тексте <p>)",
   "_dropBlocks_comment": "Блоки, вырезаемые из копии (квиз стороннего сервиса)",
   "counters": {
     "yandex": [],

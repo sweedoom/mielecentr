@@ -41,10 +41,13 @@ def copy_assets():
 
 
 def make_logo(path):
+    # brand пустой → рисуем нейтральную подпись, а не пустой прямоугольник
+    text = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисный центр"
+    w = max(220, 16 + len(text) * 12 + 16)
     svg = (
-        '<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48">'
-        '<rect width="220" height="48" rx="8" fill="#00966D"/>'
-        f'<text x="16" y="31" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#ffffff">{B}</text>'
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="48" viewBox="0 0 {w} 48">'
+        f'<rect width="{w}" height="48" rx="8" fill="#00966D"/>'
+        f'<text x="16" y="31" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#ffffff">{text}</text>'
         "</svg>")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -135,6 +138,18 @@ for spec in cfg.get("dropBlocks", []):
     if k:
         log(f"[clean] вырезан {spec}: {k} шт.")
 
+# 4b. выкидываем HTML-комментарии (мёртвый текст из исходника, в т.ч. чужие описания).
+# Условные комментарии IE (<!--[if ...]>) не трогаем.
+h = re.sub(r"<!--(?!\[if).*?-->", "", h, flags=re.S)
+
+# 4c. абзацы-дисклеймеры (например «не является официальным представителем»)
+for kw in cfg.get("dropParagraphs", []):
+    h, k = re.subn(r"<p\b[^>]*>[^<]*" + re.escape(kw) + r"[^<]*</p>", "", h, flags=re.I)
+    if k:
+        log(f"[clean] удалён абзац с «{kw}»: {k} шт.")
+    else:
+        log(f"[clean] НЕ НАЙДЕН абзац с «{kw}»")
+
 # 5. подключаем CSS/JS явно (Битрикс больше их не подгружает)
 css_local, js_local = [], []
 for p in CSS_LIST:
@@ -208,12 +223,30 @@ h = h.replace('<div class="uslugi_index">', '<div class="uslugi_index" id="uslug
 
 # 10. контакты: сначала почта, потом бренд (иначе бренд съест домен)
 h = re.sub(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]*mielecentr\.ru", cfg["email"], h)
-h = h.replace("Сервисный центр Miele (Миле)", f"Сервисный центр {B}: ремонт техники Miele (Миле)")
-h = h.replace("Сервисный центр Miele ", f"Сервисный центр {B} ")
-h = h.replace("Miele Center", B)
-h = h.replace("Miele Центр", B)
-h = h.replace("Miele Service", B)
-h = h.replace("mielecentr", cfg.get("brandSlug", B.lower()))
+_holodok = "ХОЛОД-ОК"  # ← сюда можно вписать своё название, если понадобится
+if B:
+    # порядок важен: сначала составные фразы, иначе останется мусор вида «БРЕНД Center»
+    h = h.replace("Сервисный центр Miele (Миле)", f"Сервисный центр {B}: ремонт техники Miele (Миле)")
+    h = h.replace("Сервисный центр Miele Center", f"Сервисный центр {B}")
+    h = h.replace("сервисный центр Miele Center", f"сервисный центр {B}")
+    h = h.replace("Сервисный центр Miele ", f"Сервисный центр {B} ")
+    h = h.replace("Miele Center", B)
+    h = h.replace("Miele Центр", B)
+    h = h.replace("Miele Service", B)
+else:
+    # названия компании нет — нейтральные формулировки, без выдуманного бренда
+    h = h.replace("Сервисный центр Miele (Миле)  в", "Сервисный центр Miele (Миле) в")
+    h = h.replace("Сервисный центр Miele  в", "Сервисный центр в")
+    h = h.replace("Miele (Миле)  ", "Miele (Миле) ")  # двойные пробелы из исходника
+    h = h.replace("Сервисный центр Miele Center", "Наш сервисный центр")
+    h = h.replace("сервисный центр Miele Center", "наш сервисный центр")
+    h = h.replace("В Miele Center", "В нашем сервисном центре")
+    h = h.replace("Miele Center", "Сервисный центр")
+    h = h.replace("Miele Центр", "Сервисный центр")
+    h = h.replace("Miele Service", "Сервис")
+slug = (cfg.get("brandSlug") or "").strip()
+if slug:
+    h = h.replace("mielecentr", slug)
 h = h.replace("+7 (495) 877-14-12", cfg["phonePretty"])
 h = h.replace("+74958771412", cfg["phoneRaw"])
 

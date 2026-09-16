@@ -33,7 +33,7 @@ def main():
                f"{urls}</urlset>\n")
     open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8").write(sitemap)
 
-    brand = cfg["brand"]
+    brand = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисный центр"
     phone = cfg["phonePretty"]
     notfound = f"""<!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
