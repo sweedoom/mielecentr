@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# dev-артефакты (не уходят на хостинг)
+live.html
+shot_*.png
