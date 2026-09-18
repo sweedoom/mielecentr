@@ -660,7 +660,7 @@
 <script src="bitrix/templates/gvozdevsoft_master_s1/components/bitrix/menu/mn_flmenu_top/script.js"></script>
 
 <script>
-window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"url": "https://wedeflvoryfdkzuodgzg.supabase.co", "key": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"}, "tgToken": "ODM2MzEzODk3MDpBQUdJUVVpaWZkME81Yno0cVpoNEdSeklYVEJOVTdmMjlhQQ==", "tgChats": ["8723283117", "731734894"]};
+window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"url": "https://wedeflvoryfdkzuodgzg.supabase.co", "key": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"}, "site": "mielecentr", "source": "Сайт Miele (Москва)", "tgToken": "ODM2MzEzODk3MDpBQUdJUVVpaWZkME81Yno0cVpoNEdSeklYVEJOVTdmMjlhQQ==", "tgChats": ["8723283117", "731734894"]};
 (function(){
   function collect(form){
     var f = jQuery(form);
@@ -677,7 +677,7 @@ window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"
   function ok(form){
     var f = jQuery(form);
     var box = f.find('.title').first();
-    var THANKS = '<div class="thanks_form" style="color:#00966D;font-weight:700;padding:12px 0">'
+    var THANKS = '<div class="thanks_form" style="color:#a3000a;font-weight:700;padding:12px 0">'
                + 'Спасибо! Заявка отправлена, мы перезвоним в течение 5 минут.</div>';
     if (box.length) {
       box.html(THANKS);
@@ -695,10 +695,14 @@ window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"
   }
 
   function sendTG(d, L){
-    var text = 'Заявка: ' + d.title + '\\nТелефон: ' + d.phone +
+    var text = 'Новая заявка\\n' +
+               'Источник: ' + (d.source || L.source || '') + '\\n' +
+               'Форма: ' + d.title + '\\n' +
+               'Телефон: ' + d.phone +
                (d.name ? '\\nИмя: ' + d.name : '') +
                (d.email ? '\\nE-mail: ' + d.email : '') +
-               (d.message ? '\\nСообщение: ' + d.message : '') + '\\nСтраница: ' + d.page;
+               (d.message ? '\\nСообщение: ' + d.message : '') +
+               '\\nСтраница: ' + d.page;
     var token = atob(L.tgToken);
     return Promise.all((L.tgChats || []).map(function(chat){
       return fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
@@ -706,6 +710,27 @@ window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"
         body: JSON.stringify({chat_id: chat, text: text})
       }).catch(function(){ return null; });
     }));
+  }
+  function postLead(L, d){
+    if (!L.sb || !L.sb.url || !L.sb.key) return null;
+    var base = {name: d.name, phone: d.phone, message: d.message, source: d.title,
+                page: d.page, status: 'new', site: L.site || ''};
+    function send(payload){
+      return fetch(L.sb.url + '/rest/v1/leads', {
+        method: 'POST',
+        headers: {apikey: L.sb.key, Authorization: 'Bearer ' + L.sb.key,
+                  'Content-Type': 'application/json', Prefer: 'return=minimal'},
+        body: JSON.stringify(payload)
+      });
+    }
+    return send(base).then(function(r){
+      if (r && r.ok) return r;
+      // в старой схеме нет колонки site - кладём тег сайта в utm
+      var p2 = {};
+      for (var k in base) { if (k !== 'site') p2[k] = base[k]; }
+      p2.utm = L.site || '';
+      return send(p2);
+    }).catch(function(){ return null; });
   }
   jQuery(function($){
     $(document).off('submit.leads').on('submit.leads', 'form.feedback', function(e){
@@ -718,13 +743,7 @@ window.SITE_LEADS = {"backend": "", "mode": "telegram", "endpoint": "", "sb": {"
       if (digits.length < 10) { fail(form, 'Введите номер телефона полностью'); return false; }
       var storeP = null;
       if (L.sb && L.sb.url && L.sb.key) {
-        storeP = fetch(L.sb.url + '/rest/v1/leads', {
-          method: 'POST',
-          headers: {apikey: L.sb.key, Authorization: 'Bearer ' + L.sb.key,
-                    'Content-Type': 'application/json', Prefer: 'return=minimal'},
-          body: JSON.stringify({name: d.name, phone: d.phone, message: d.message,
-                                source: d.title, page: d.page, status: 'new'})
-        }).catch(function(){ return null; });
+        storeP = postLead(L, d);
       } else if (L.backend) {
         storeP = fetch(L.backend, {method:'POST', mode:'no-cors',
               headers:{'Content-Type':'text/plain'}, body: JSON.stringify(d)})

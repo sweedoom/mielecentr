@@ -515,14 +515,14 @@ table {
 }
 .owl-theme a.slidetextlink {
 	color: #fff;
-	border: 3px solid #48a216;
+	border: 3px solid #a3000a;
 	padding: 8px 13px;
 	border-radius: 4px;
 	font-size: 1.1em;
 	cursor: pointer;
 }
 .owl-theme a.slidetextlink:hover {
-	background:  #48a216;
+	background:  #a3000a;
 }
 .owl-theme span.cena_color {
     font-size: 1.5em;
@@ -1782,7 +1782,7 @@ body {
 
 a {
 	text-decoration: none;
-	color: #48a216;
+	color: #a3000a;
 	outline: 0;
 }
 
@@ -1810,7 +1810,7 @@ button {
 .button {
 	padding: 13px 12px;
 	border-radius: 4px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	text-transform: uppercase;
 	text-decoration: none !important;
@@ -1999,7 +1999,7 @@ a.button:active {
 #header #header_logo_img .fa {
 	padding: 5px 9px;
 	font-size: 2.3em;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	border-radius: 4px;
 }
@@ -2081,7 +2081,7 @@ a.button:active {
 /* TOP MENU */
 
 #top_menu_main {
-	background: #48a216;
+	background: #a3000a;
 	z-index: 999;
   position: absolute;
 }
@@ -2099,7 +2099,7 @@ a.button:active {
 
 #top_menu ul li ul li.root-item-selected,
 #top_menu ul li ul li.item-selected {
-	background: #48a216;
+	background: #a3000a;
 }
 
 #top_menu ul li.item-selected >a {
@@ -2252,19 +2252,19 @@ a.button:active {
 }
 
 #section_element_menu ul.menu-element-list-active2 a.item-selected {
-    color: #48a216;
+    color: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu > li.menu-section-active2 > a {
-    background: #48a216;
+    background: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu > li.menu-section-drive-active > a {
-    background: #48a216;
+    background: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu li a:hover {
-    background: #48a216;
+    background: #a3000a;
     color: #fff;
 }
 
@@ -2328,7 +2328,7 @@ a.button:active {
 #content th {
 	text-transform: uppercase;
 	padding: 15px 5px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	font-size: 0.9em;
 	font-weight: 600;
@@ -2653,8 +2653,8 @@ a.button:active {
 #content #tabs>ul>li.active, #content #tabs>ul>li.active:hover,
 #content #tabs>ul>li:hover {
 	border: none;
-	border-bottom: 3px solid #48a216;
-	color: #48a216;
+	border-bottom: 3px solid #a3000a;
+	color: #a3000a;
 }
 
 @media only screen and (max-width: 768px) {
@@ -2840,7 +2840,7 @@ a.button:active {
 	width: 100%;
 	height: auto;
 	padding-bottom: 1px;
-	border-bottom: 3px solid #48a216;
+	border-bottom: 3px solid #a3000a;
 }
 
 #uslugi_box_index .img img:hover {
@@ -2947,7 +2947,7 @@ a.button:active {
 
 #index_photo .prevarr, #index_photo .nextarr {
 	font-size: 2.2em;
-	color: #48a216;
+	color: #a3000a;
 }
 
 #index_photo .prevarr:hover, #index_photo .nextarr:hover {
@@ -3038,7 +3038,7 @@ a.button:active {
 #content .index_plus .fa {
 	margin: 3px 0 0 10px;
 	font-size: 2.5em;
-	color: #48a216;
+	color: #a3000a;
 }
 
 #content_index .index_plus .title,
@@ -3069,7 +3069,7 @@ a.button:active {
 	counter-increment: myCounter;
 	content:counter(myCounter);
 	color: white;
-	background: #48a216;
+	background: #a3000a;
 	display: inline-block;
 	text-align: center;
 	margin: 5px 10px;
@@ -3441,7 +3441,7 @@ a.button:active {
 #content .accordion h2 {
 	font-size: 1.2em;
 	margin: 0;
-	background: #48a216;
+	background: #a3000a;
 }
 
 #content .accordion h2:hover {
@@ -3470,7 +3470,7 @@ a.button:active {
 
 #content  .prais_print a {
 	padding: 5px 15px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	text-transform: uppercase;
 	text-decoration: none;
@@ -3530,7 +3530,7 @@ a.button:active {
 	bottom: 13%;
 	display: block;
 	padding: 8px 15px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	border-radius: 4px;
 	text-decoration: none;
@@ -3620,7 +3620,7 @@ a.button:active {
 
 #contacts .left .fa {
 	font-size: 2em;
-	color: #48a216;
+	color: #a3000a;
 	margin-right: 15px;
 	width: 30px;
 }
@@ -3835,7 +3835,7 @@ a.button:active {
 	height: 30px;
 	line-height: 31px;
 	color: #fff;
-	background: #48a216;
+	background: #a3000a;
 	border-radius: 4px;
 	padding-right: 2px;
 	margin-right: 10px;
@@ -3872,7 +3872,7 @@ a.button:active {
 	max-width: 600px;
 	min-height: 150px; 
 	margin: 0 1.3% 40px 0; 
-	border-bottom: 3px solid #48a216;
+	border-bottom: 3px solid #a3000a;
 	box-sizing: border-box;
 }
 
@@ -4137,7 +4137,7 @@ a.button:active {
 	width: 160px;
 	text-align: center;
 	padding: 15px 0;
-	background: #48a216;
+	background: #a3000a;
 	text-decoration: none;
 	border-radius: 4px;
 	text-transform: uppercase;
@@ -4330,7 +4330,7 @@ a.button:active {
 }
 
 .bx-filter .bx-filter-parameters-box-title span {
-	color: #48a216;
+	color: #a3000a;
 	font-size: 1.1em;
 }
 
@@ -4552,7 +4552,7 @@ a.button:active {
 #sidebar .link_all a {
     padding: 3px 10px;
     color: #fff;
-    background: #48a216;
+    background: #a3000a;
     border-radius: 4px;
 }
 
@@ -4712,7 +4712,7 @@ a.button:active {
 
 #sidebar_prais .block .fa {
 	font-size: 2.5em;
-	color: #48a216;
+	color: #a3000a;
 	margin-bottom: 10px;
 }
 
@@ -5515,7 +5515,7 @@ a.button:active {
 	}
 
 	.owl-theme a.slidetextlink {
-		border: 2px solid #48a216;
+		border: 2px solid #a3000a;
 		padding: 5px 13px;
 		font-size: 0.9em;
 		margin-bottom: 25px;
@@ -5627,7 +5627,7 @@ a {color: #a3000a;}
 	}
 
 #header .hdtopmenu ul li:hover {
-	background-color: #48a216;
+	background-color: #a3000a;
 }
 
 #header .hdtopmenu ul li:hover > a {

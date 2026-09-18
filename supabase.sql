@@ -19,6 +19,10 @@ create table if not exists public.leads (
 -- индекс на дату (админка сортирует по ней)
 create index if not exists leads_created_at_idx on public.leads (created_at desc);
 
+-- ---------- миграция: тег сайта (к боту привязано несколько сайтов) ----------
+alter table public.leads add column if not exists site text default '';
+create index if not exists leads_site_idx on public.leads (site);
+
 -- ---------- RLS: доступ по анонимному ключу ----------
 alter table public.leads enable row level security;
 

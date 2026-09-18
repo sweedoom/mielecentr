@@ -110,14 +110,14 @@
 }
 .owl-theme a.slidetextlink {
 	color: #fff;
-	border: 3px solid #48a216;
+	border: 3px solid #a3000a;
 	padding: 8px 13px;
 	border-radius: 4px;
 	font-size: 1.1em;
 	cursor: pointer;
 }
 .owl-theme a.slidetextlink:hover {
-	background:  #48a216;
+	background:  #a3000a;
 }
 .owl-theme span.cena_color {
     font-size: 1.5em;

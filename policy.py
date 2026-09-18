@@ -10,6 +10,7 @@ B = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисны�
 PHONE = cfg["phonePretty"]
 EMAIL = cfg["email"]
 CITY_N = cfg["city"]["nom"]
+_ACC = (cfg.get("theme", {}) or {}).get("accent", "#a3000a")
 ADDRESS = cfg["address"]
 CO = cfg.get("company", {})
 OPERATOR = CO.get("fullName", B)
@@ -26,8 +27,8 @@ def shell(title, body):
         "<link rel=\"icon\" href=\"favicon.png\">\n"
         "<style>body{font-family:Arial,Helvetica,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.6;color:#222}"
         "h1{font-size:26px;margin-bottom:8px}h2{font-size:18px;margin-top:28px}"
-        ".muted{color:#777}a{color:#00966D}"
-        ".back{display:inline-block;margin-bottom:20px;text-decoration:none;color:#00966D}</style>\n"
+        f".muted{{color:#777}}a{{color:{_ACC}}}"
+        f".back{{display:inline-block;margin-bottom:20px;text-decoration:none;color:{_ACC}}}</style>\n"
         "</head>\n<body>\n"
         "<a class=\"back\" href=\"index.html\">\u2190 на главную</a>\n"
         f"<h1>{title}</h1>\n"

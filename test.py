@@ -30,7 +30,7 @@ async def main():
                 await route.fulfill(status=200, content_type="application/json",
                                     body='{"ok":true,"result":{"message_id":1}}')
             await pg.route("**/api.telegram.org/**", mock)
-            await pg.route("**/supabase.co/rest/v1/leads", mock)
+            await pg.route("**/rest/v1/leads**", mock)
 
             await pg.goto(BASE, wait_until="networkidle", timeout=60000)
             await pg.wait_for_timeout(1500)

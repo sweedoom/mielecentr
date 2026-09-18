@@ -7,7 +7,7 @@ body {
 
 a {
 	text-decoration: none;
-	color: #48a216;
+	color: #a3000a;
 	outline: 0;
 }
 
@@ -35,7 +35,7 @@ button {
 .button {
 	padding: 13px 12px;
 	border-radius: 4px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	text-transform: uppercase;
 	text-decoration: none !important;
@@ -224,7 +224,7 @@ a.button:active {
 #header #header_logo_img .fa {
 	padding: 5px 9px;
 	font-size: 2.3em;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	border-radius: 4px;
 }
@@ -306,7 +306,7 @@ a.button:active {
 /* TOP MENU */
 
 #top_menu_main {
-	background: #48a216;
+	background: #a3000a;
 	z-index: 999;
   position: absolute;
 }
@@ -324,7 +324,7 @@ a.button:active {
 
 #top_menu ul li ul li.root-item-selected,
 #top_menu ul li ul li.item-selected {
-	background: #48a216;
+	background: #a3000a;
 }
 
 #top_menu ul li.item-selected >a {
@@ -477,19 +477,19 @@ a.button:active {
 }
 
 #section_element_menu ul.menu-element-list-active2 a.item-selected {
-    color: #48a216;
+    color: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu > li.menu-section-active2 > a {
-    background: #48a216;
+    background: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu > li.menu-section-drive-active > a {
-    background: #48a216;
+    background: #a3000a;
 }
 
 #section_element_menu ul#vertical-multilevel-menu li a:hover {
-    background: #48a216;
+    background: #a3000a;
     color: #fff;
 }
 
@@ -553,7 +553,7 @@ a.button:active {
 #content th {
 	text-transform: uppercase;
 	padding: 15px 5px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	font-size: 0.9em;
 	font-weight: 600;

@@ -2,6 +2,19 @@
   "_comment": "ВСЕ ДАННЫЕ САЙТА ЗДЕСЬ. Поменял -> python build.py -> git push. Больше ничего трогать не надо.",
   "brand": "",
   "brandSlug": "",
+  "siteName": "Фирменный сервисный центр техники Miele",
+  "siteTag": "mielecentr",
+  "_siteTag_comment": "Короткий тег сайта - подставляется в заявки, чтобы понимать, откуда пришла заявка",
+  "sourceNames": {
+    "mielecentr": "Сайт Miele (Москва)",
+    "holodok": "Сайт Tylo (Челябинск)"
+  },
+  "_sourceNames_comment": "Тег сайта -> человеческое название. Общее хранилище заявок, поэтому админка подписывает чужие заявки правильно",
+  "theme": {
+    "accent": "#a3000a",
+    "accentDark": "#7a0008",
+    "_comment": "Акцентный цвет сайта. accentaDark - для градиентов и hover"
+  },
   "siteUrl": "https://sweedoom.github.io/mielecentr/",
   "domain": "",
   "_domain_comment": "Свой домен (например miele-remont.ru). Пока пусто - сайт живёт на GitHub Pages",
@@ -107,6 +120,8 @@
       "731734894"
     ],
     "_chatIds_comment": "Кому приходят заявки в Telegram",
+    "sourceName": "Сайт Miele (Москва)",
+    "_sourceName_comment": "Строка «Источник» в сообщении бота. К боту привязано несколько сайтов - по ней видно, откуда заявка",
     "endpoint": ""
   },
   "brandPhrase": "Фирменный сервисный центр техники Miele",

@@ -8,6 +8,8 @@ OUT = os.path.join(ROOT, "docs")
 cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
 SITE = cfg["siteUrl"].rstrip("/") + "/"
 TODAY = date.today().isoformat()
+_ACC = (cfg.get("theme", {}) or {}).get("accent", "#a3000a")
+_ACC_D = (cfg.get("theme", {}) or {}).get("accentDark", "#7a0008")
 
 
 def main():
@@ -43,11 +45,11 @@ def main():
 <link rel="icon" href="favicon.png">
 <style>
 body{{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
-font-family:Arial,sans-serif;color:#fff;background:linear-gradient(135deg,#00966D,#0f5132);text-align:center}}
+font-family:Arial,sans-serif;color:#fff;background:linear-gradient(135deg,{_ACC},{_ACC_D});text-align:center}}
 .box{{padding:40px}}
 h1{{font-size:96px;margin:0;line-height:1}}
 p{{font-size:20px;opacity:.95}}
-a{{display:inline-block;margin-top:24px;padding:14px 32px;background:#fff;color:#00966D;
+a{{display:inline-block;margin-top:24px;padding:14px 32px;background:#fff;color:{_ACC};
 border-radius:8px;text-decoration:none;font-weight:700}}
 </style></head><body><div class="box">
 <h1>404</h1><p>Такой страницы нет</p>

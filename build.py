@@ -17,6 +17,10 @@ cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
 C = cfg["city"]
 L = cfg["leads"]
 B = cfg["brand"]
+TH = cfg.get("theme", {}) or {}
+ACCENT = (TH.get("accent") or "#a3000a").strip()
+ACCENT_D = (TH.get("accentDark") or "#7a0008").strip()
+GREENS = ("#48a216", "#00966D", "#00966d", "#0f5132", "#3d8b12", "#0b7a52")
 ASSET_EXT = (".css", ".js", ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".ico",
              ".woff", ".woff2", ".ttf", ".eot", ".json", ".txt")
 
@@ -26,6 +30,21 @@ def log(m):
 
 
 # ------------------------------------------------------------------ ассеты
+_RECOLOR_N = 0
+
+
+def recolor(css_text):
+    """Зелёный акцент шаблона -> акцентный цвет из конфига."""
+    global _RECOLOR_N
+    out = css_text
+    for g in GREENS:
+        c = out.count(g)
+        if c:
+            out = out.replace(g, ACCENT)
+            _RECOLOR_N += c
+    return out
+
+
 def copy_assets():
     os.makedirs(OUT, exist_ok=True)
     n = 0
@@ -34,9 +53,23 @@ def copy_assets():
         dst_dir = OUT if rel == "." else os.path.join(OUT, rel)
         os.makedirs(dst_dir, exist_ok=True)
         for f in files:
-            shutil.copy2(os.path.join(root, f), os.path.join(dst_dir, f))
+            src_f = os.path.join(root, f)
+            if f.lower().endswith(".css"):
+                try:
+                    t = open(src_f, encoding="utf-8", errors="ignore").read()
+                except Exception:
+                    t = None
+                if t is not None:
+                    t2 = recolor(t)
+                    with open(os.path.join(dst_dir, f), "w", encoding="utf-8") as fh:
+                        fh.write(t2)
+                    n += 1
+                    continue
+            shutil.copy2(src_f, os.path.join(dst_dir, f))
             n += 1
     log(f"[assets] скопировано файлов: {n}")
+    if _RECOLOR_N:
+        log(f"[theme] зелёный -> {ACCENT}: замен {_RECOLOR_N}")
     return n
 
 
@@ -59,7 +92,7 @@ def make_logo(path):
         f' font-weight="700" fill="#ffffff">{s}</text>' for i, s in enumerate(lines))
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h_px}" viewBox="0 0 {w} {h_px}">'
-        f'<rect width="{w}" height="{h_px}" rx="8" fill="#00966D"/>{texts}</svg>')
+        f'<rect width="{w}" height="{h_px}" rx="8" fill="{ACCENT}"/>{texts}</svg>')
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
@@ -348,7 +381,7 @@ window.SITE_LEADS = __LEADS__;
   function ok(form){
     var f = jQuery(form);
     var box = f.find('.title').first();
-    var THANKS = '<div class="thanks_form" style="color:#00966D;font-weight:700;padding:12px 0">'
+    var THANKS = '<div class="thanks_form" style="color:__ACCENT__;font-weight:700;padding:12px 0">'
                + 'Спасибо! Заявка отправлена, мы перезвоним в течение 5 минут.</div>';
     if (box.length) {
       box.html(THANKS);
@@ -365,6 +398,27 @@ window.SITE_LEADS = __LEADS__;
     if (err.length) { err.html(msg); } else { alert(msg); }
   }
 __TG_FN__
+  function postLead(L, d){
+    if (!L.sb || !L.sb.url || !L.sb.key) return null;
+    var base = {name: d.name, phone: d.phone, message: d.message, source: d.title,
+                page: d.page, status: 'new', site: L.site || ''};
+    function send(payload){
+      return fetch(L.sb.url + '/rest/v1/leads', {
+        method: 'POST',
+        headers: {apikey: L.sb.key, Authorization: 'Bearer ' + L.sb.key,
+                  'Content-Type': 'application/json', Prefer: 'return=minimal'},
+        body: JSON.stringify(payload)
+      });
+    }
+    return send(base).then(function(r){
+      if (r && r.ok) return r;
+      // в старой схеме нет колонки site - кладём тег сайта в utm
+      var p2 = {};
+      for (var k in base) { if (k !== 'site') p2[k] = base[k]; }
+      p2.utm = L.site || '';
+      return send(p2);
+    }).catch(function(){ return null; });
+  }
   jQuery(function($){
     $(document).off('submit.leads').on('submit.leads', 'form.feedback', function(e){
       e.preventDefault();
@@ -376,13 +430,7 @@ __TG_FN__
       if (digits.length < 10) { fail(form, 'Введите номер телефона полностью'); return false; }
       var storeP = null;
       if (L.sb && L.sb.url && L.sb.key) {
-        storeP = fetch(L.sb.url + '/rest/v1/leads', {
-          method: 'POST',
-          headers: {apikey: L.sb.key, Authorization: 'Bearer ' + L.sb.key,
-                    'Content-Type': 'application/json', Prefer: 'return=minimal'},
-          body: JSON.stringify({name: d.name, phone: d.phone, message: d.message,
-                                source: d.title, page: d.page, status: 'new'})
-        }).catch(function(){ return null; });
+        storeP = postLead(L, d);
       } else if (L.backend) {
         storeP = fetch(L.backend, {method:'POST', mode:'no-cors',
               headers:{'Content-Type':'text/plain'}, body: JSON.stringify(d)})
@@ -413,11 +461,15 @@ def _enc(v):
 
 
 _SB = cfg.get("admin", {}).get("supabase", {}) or {}
+SITE_TAG = (cfg.get("siteTag") or "").strip() or "site"
+SRC_NAME = (L.get("sourceName") or cfg.get("siteName") or "Сайт").strip()
 _LEADS_CFG = {
     "backend": cfg.get("admin", {}).get("backendUrl", ""),
     "mode": L.get("mode", "mailto"),
     "endpoint": L.get("endpoint", ""),
     "sb": {"url": _SB.get("url", ""), "key": _SB.get("anonKey", "")},
+    "site": SITE_TAG,
+    "source": SRC_NAME,
 }
 if _USE_TG:
     _LEADS_CFG["tgToken"] = _enc(L.get("telegramBotToken", ""))
@@ -428,10 +480,14 @@ lead_js = lead_js.replace("__LEADS__", json.dumps(_LEADS_CFG, ensure_ascii=False
 if _USE_TG:
     tg_fn = """
   function sendTG(d, L){
-    var text = 'Заявка: ' + d.title + '\\\\nТелефон: ' + d.phone +
+    var text = 'Новая заявка\\\\n' +
+               'Источник: ' + (d.source || L.source || '') + '\\\\n' +
+               'Форма: ' + d.title + '\\\\n' +
+               'Телефон: ' + d.phone +
                (d.name ? '\\\\nИмя: ' + d.name : '') +
                (d.email ? '\\\\nE-mail: ' + d.email : '') +
-               (d.message ? '\\\\nСообщение: ' + d.message : '') + '\\\\nСтраница: ' + d.page;
+               (d.message ? '\\\\nСообщение: ' + d.message : '') +
+               '\\\\nСтраница: ' + d.page;
     var token = atob(L.tgToken);
     return Promise.all((L.tgChats || []).map(function(chat){
       return fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
@@ -459,7 +515,7 @@ else:
       ok(form);"""
 
 lead_js = lead_js.replace("__TG_FN__", tg_fn).replace("__FALLBACK__", fallback)
-lead_js = lead_js.replace("__EMAIL__", cfg["email"])
+lead_js = lead_js.replace("__EMAIL__", cfg["email"]).replace("__ACCENT__", ACCENT)
 
 h = h.replace("</head>", "".join(head_add) + css_html + "</head>")
 
@@ -486,24 +542,36 @@ make_logo(os.path.join(OUT, cfg["logo"].replace("/", os.sep)))
 with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
     f.write(h)
 
-# админка
+# админка (собирается всегда: с Supabase — общее хранилище, без него — локальный режим)
 A = cfg.get("admin", {}) or {}
 _sb = A.get("supabase", {}) or {}
 _adm_url = A.get("backendUrl", "")
-_HAS_STORE = bool(_adm_url) or bool(_sb.get("url") and _sb.get("anonKey"))
 _ADM_PAGE = A.get("page") or "admin.html"
 adm_src = os.path.join(ROOT, "admin_src.html")
-if os.path.isfile(adm_src) and _HAS_STORE:
+if os.path.isfile(adm_src):
     tpl = open(adm_src, encoding="utf-8").read()
     b64 = lambda x: base64.b64encode(str(x).encode()).decode()
+    _chats = json.dumps(_TG_CHATS if _USE_TG else [])
     tpl = (tpl.replace("@LEADS_BACKEND@", _adm_url)
               .replace("@SB_URL_B64@", b64(_sb.get("url", "")))
               .replace("@SB_KEY_B64@", b64(_sb.get("anonKey", "")))
+              .replace("@TG_TOKEN_B64@", b64(L.get("telegramBotToken", "") if _USE_TG else ""))
+              .replace("@TG_CHATS@", _chats)
+              .replace("@SOURCE_MAP@", json.dumps(cfg.get("sourceNames", {}) or {}, ensure_ascii=False))
+              .replace("@SITE_TAG@", SITE_TAG)
+              .replace("@SOURCE_NAME@", SRC_NAME)
+              .replace("@SITE_NAME@", cfg.get("siteName") or cfg.get("brandPhrase") or "Сервисный центр")
+              .replace("@SHORT_NAME@", cfg.get("logoText") or cfg.get("siteName") or "Сервисный центр")
+              .replace("@PHONE@", cfg.get("phonePretty", ""))
+              .replace("@ACCENT@", ACCENT)
+              .replace("@ACCENT_DARK@", ACCENT_D)
               .replace("@ADMIN_PW@", A.get("password", "")))
     open(os.path.join(OUT, _ADM_PAGE), "w", encoding="utf-8").write(tpl)
-    log(f"[admin] {_ADM_PAGE} собран")
+    _mode = "Supabase" if (_sb.get("url") and _sb.get("anonKey")) else "локальный режим"
+    log(f"[admin] {_ADM_PAGE} собран (хранилище: {_mode}, уведомления: "
+        f"{len(_TG_CHATS) if _USE_TG else 0} получателей)")
 else:
-    log("[admin] админка не собирается — хранилище не подключено")
+    log("[admin] нет шаблона admin_src.html")
 
 # политика / реквизиты / seo
 try:

@@ -3,3 +3,4 @@ __pycache__/
 # dev-артефакты (не уходят на хостинг)
 live.html
 shot_*.png
+adm_*.png

@@ -37,8 +37,8 @@
 #content #tabs>ul>li.active, #content #tabs>ul>li.active:hover,
 #content #tabs>ul>li:hover {
 	border: none;
-	border-bottom: 3px solid #48a216;
-	color: #48a216;
+	border-bottom: 3px solid #a3000a;
+	color: #a3000a;
 }
 
 @media only screen and (max-width: 768px) {
@@ -224,7 +224,7 @@
 	width: 100%;
 	height: auto;
 	padding-bottom: 1px;
-	border-bottom: 3px solid #48a216;
+	border-bottom: 3px solid #a3000a;
 }
 
 #uslugi_box_index .img img:hover {
@@ -331,7 +331,7 @@
 
 #index_photo .prevarr, #index_photo .nextarr {
 	font-size: 2.2em;
-	color: #48a216;
+	color: #a3000a;
 }
 
 #index_photo .prevarr:hover, #index_photo .nextarr:hover {
@@ -422,7 +422,7 @@
 #content .index_plus .fa {
 	margin: 3px 0 0 10px;
 	font-size: 2.5em;
-	color: #48a216;
+	color: #a3000a;
 }
 
 #content_index .index_plus .title,
@@ -453,7 +453,7 @@
 	counter-increment: myCounter;
 	content:counter(myCounter);
 	color: white;
-	background: #48a216;
+	background: #a3000a;
 	display: inline-block;
 	text-align: center;
 	margin: 5px 10px;
@@ -825,7 +825,7 @@
 #content .accordion h2 {
 	font-size: 1.2em;
 	margin: 0;
-	background: #48a216;
+	background: #a3000a;
 }
 
 #content .accordion h2:hover {
@@ -854,7 +854,7 @@
 
 #content  .prais_print a {
 	padding: 5px 15px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	text-transform: uppercase;
 	text-decoration: none;
@@ -914,7 +914,7 @@
 	bottom: 13%;
 	display: block;
 	padding: 8px 15px;
-	background: #48a216;
+	background: #a3000a;
 	color: #fff;
 	border-radius: 4px;
 	text-decoration: none;
@@ -1004,7 +1004,7 @@
 
 #contacts .left .fa {
 	font-size: 2em;
-	color: #48a216;
+	color: #a3000a;
 	margin-right: 15px;
 	width: 30px;
 }
@@ -1219,7 +1219,7 @@
 	height: 30px;
 	line-height: 31px;
 	color: #fff;
-	background: #48a216;
+	background: #a3000a;
 	border-radius: 4px;
 	padding-right: 2px;
 	margin-right: 10px;

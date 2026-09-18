@@ -9,13 +9,15 @@ OUT = os.path.join(ROOT, "docs")
 cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
 brand = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисный центр"
 city = cfg["city"]["nom"]
+_ACC = (cfg.get("theme", {}) or {}).get("accent", "#a3000a")
+_ACC_D = (cfg.get("theme", {}) or {}).get("accentDark", "#7a0008")
 
 
 def html_og():
     return f"""<!doctype html><html><head><meta charset='utf-8'><style>
 html,body{{margin:0;height:100%}}
 body{{display:flex;align-items:center;justify-content:center;font-family:Inter,Arial,sans-serif;color:#fff;
-background:linear-gradient(135deg,#00966D 0%,#0f5132 100%)}}
+background:linear-gradient(135deg,{_ACC} 0%,{_ACC_D} 100%)}}
 .wrap{{text-align:center;padding:60px}}
 .b{{font-size:120px;font-weight:800;letter-spacing:-2px}}
 .s{{font-size:42px;font-weight:500;margin-top:30px;opacity:.95}}
@@ -31,7 +33,7 @@ def html_fav():
     letter = (brand[:1] or "B").upper()
     return f"""<!doctype html><html><head><meta charset='utf-8'><style>
 html,body{{margin:0;height:100%}}
-body{{display:flex;align-items:center;justify-content:center;font-family:Inter,Arial,sans-serif;color:#fff;background:#00966D}}
+body{{display:flex;align-items:center;justify-content:center;font-family:Inter,Arial,sans-serif;color:#fff;background:{_ACC}}}
 .b{{font-size:200px;font-weight:800;line-height:1}}
 </style></head><body><div class='b'>{letter}</div></body></html>"""
 
