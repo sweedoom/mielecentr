@@ -95,8 +95,6 @@ def build_svg(lines, widths100, target_w, pad, accent, lh_k=1.16):
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
            f'viewBox="0 0 {w} {h}" role="img">'
            f'<rect width="{w}" height="{h}" rx="10" fill="{accent}"/>'
-           f'<rect x="{pad * 0.45:.1f}" y="{pad * 0.8:.1f}" width="4" '
-           f'height="{h - pad * 1.6:.1f}" rx="2" fill="#ffffff" opacity="0.9"/>'
            + "".join(out) + '</svg>')
     return svg, w, h
 

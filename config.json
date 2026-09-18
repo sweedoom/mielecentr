@@ -15,9 +15,9 @@
     "accentDark": "#7a0008",
     "_comment": "Акцентный цвет сайта. accentaDark - для градиентов и hover"
   },
-  "siteUrl": "https://miele-technika.ru/",
-  "domain": "miele-technika.ru",
-  "_domain_comment": "Свой домен (например miele-remont.ru). Пока пусто - сайт живёт на GitHub Pages",
+  "siteUrl": "https://linar.me/mielecentr/",
+  "domain": "",
+  "_domain_comment": "Свой домен. КУПИШЬ miele-technika.ru -> сюда вписать, тогда CNAME создастся сам. Пока пусто - сайт живёт на linar.me/mielecentr",
   "phonePretty": "+7 (903) 559-00-40",
   "phoneRaw": "+79035590040",
   "email": "nat89323081717@yandex.ru",
@@ -104,6 +104,8 @@
     "_page_comment": "Адрес админки этого сайта. У каждого сайта СВОЙ адрес и свой вид; бот один на всех",
     "password": "K9#mR2$vLp7!zQx4",
     "_password_comment": "Пароль входа в админку (сложный). Меняешь тут -> пересобрать",
+    "siteMark": "miele",
+    "_siteMark_comment": "Как опознать СВОИ старые заявки (до введения тегов) - по слову в адресе страницы. Только про этот сайт, чужих упоминаний тут нет",
     "storePassword": "K9#mR2$vLp7!zQx4",
     "_storePassword_comment": "Пароль хранилища (один на оба сайта, вшит в функцию admin_leads). Пароль ВХОДА в эту админку — свой, см. выше",
     "supabase": {
@@ -130,8 +132,8 @@
   "_brandPhrase_comment": "Как называем сервисный центр в текстах и заголовке",
   "logoText": "Фирменный сервисный",
   "logoText2": "центр техники Miele",
-  "logoWidth": 250,
-  "logoPad": 14,
+  "logoWidth": 230,
+  "logoPad": 8,
   "_logo_comment": "Две строки логотипа и ширина картинки в шапке/подвале",
   "footerLegal": true,
   "_footerLegal_comment": "true = в подвале строка «Юрлицо: ООО «ХОЛОДОК», ИНН ...» со ссылкой на реквизиты"

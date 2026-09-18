@@ -15,13 +15,18 @@ PW = (_cfg.get("admin", {}) or {}).get("password") or ""
 LEADS = [
     {"id": "11111111-1111-1111-1111-111111111111", "created_at": "2026-09-16T10:20:00+00:00",
      "name": "Иван", "phone": "+7 (999) 111-11-11", "message": "Не греет духовка",
-     "source": "Вызвать мастера", "page": "https://x/", "status": "new", "site": "mielecentr"},
+     "source": "Вызвать мастера", "page": "https://linar.me/mielecentr/", "status": "new", "site": "mielecentr"},
     {"id": "22222222-2222-2222-2222-222222222222", "created_at": "2026-09-15T18:05:00+00:00",
      "name": "Ольга", "phone": "+7 (999) 222-22-22", "message": "", "source": "Заказать звонок",
-     "page": "https://x/", "status": "work", "site": "mielecentr", "comment": "перезвонить"},
+     "page": "https://linar.me/mielecentr/", "status": "work", "site": "mielecentr", "comment": "перезвонить"},
+    # старая заявка без тега — опознаётся по слову miele в адресе страницы
+    {"id": "44444444-4444-4444-4444-444444444444", "created_at": "2026-09-13T09:00:00+00:00",
+     "name": "Мария", "phone": "+7 (999) 444-44-44", "message": "Старая заявка без тега",
+     "source": "Заявка с сайта", "page": "https://linar.me/mielecentr/", "status": "done"},
+    # ЧУЖАЯ заявка — другого сайта, в этой админке её быть НЕ должно
     {"id": "33333333-3333-3333-3333-333333333333", "created_at": "2026-09-14T09:00:00+00:00",
-     "name": "", "phone": "+7 (999) 333-33-33", "message": "Стиралка Miele", "source": "Заявка с сайта",
-     "page": "https://x/", "status": "done", "site": ""},
+     "name": "Пётр", "phone": "+7 (999) 333-33-33", "message": "Парогенератор шипит",
+     "source": "Заявка с сайта", "page": "https://linar.me/holodok/", "status": "new", "site": "holodok"},
 ]
 
 
@@ -60,7 +65,7 @@ async def main():
             await pg.screenshot(path=os.path.join(ROOT, "adm_leads.png"))
 
             rows = await pg.locator("#tb tr").count()
-            print("СТРОК В ТАБЛИЦЕ:", rows)
+            print("СТРОК В ТАБЛИЦЕ:", rows, "(ждём 3: свои 2 + старая своя; чужая holodok скрыта)")
             print("СТАТ-КАРТОЧКИ:", await pg.locator("#cards .v").all_inner_texts())
 
             # фильтр «Новые»

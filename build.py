@@ -571,7 +571,7 @@ if os.path.isfile(adm_src):
     for _p in (A.get("storePassword") or "", A.get("password") or "", "holodok2026"):
         if _p and _p not in _seen:
             _seen.add(_p)
-            _pws.append(_p)
+            _pws.append(_enc(_p))          # в html попадают только base64
     tpl = (tpl.replace("@STORE_PWS@", json.dumps(_pws, ensure_ascii=False))
               .replace("@LEADS_BACKEND@", _adm_url)
               .replace("@SB_URL_B64@", b64(_sb.get("url", "")))
@@ -580,6 +580,7 @@ if os.path.isfile(adm_src):
               .replace("@TG_CHATS@", _chats)
               .replace("@SOURCE_MAP@", json.dumps(cfg.get("sourceNames", {}) or {}, ensure_ascii=False))
               .replace("@SITE_TAG@", SITE_TAG)
+              .replace("@SITE_MARK@", (A.get("siteMark") or SITE_TAG))
               .replace("@SOURCE_NAME@", SRC_NAME)
               .replace("@SITE_NAME@", cfg.get("siteName") or cfg.get("brandPhrase") or "Сервисный центр")
               .replace("@SHORT_NAME@", cfg.get("logoText") or cfg.get("siteName") or "Сервисный центр")

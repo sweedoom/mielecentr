@@ -187,7 +187,6 @@ td.ph b{font-weight:700}
       <div class="sp"></div>
       <input class="f grow" id="q" placeholder="Поиск: имя, телефон, текст…" style="max-width:280px">
       <select class="f" id="fSrc"><option value="">Все источники</option></select>
-      <select class="f" id="fSite"><option value="">Все сайты</option></select>
       <button class="btn" id="btnRefresh">Обновить</button>
       <button class="btn pri" id="btnAdd">+ Заявка</button>
     </header>
@@ -218,7 +217,7 @@ td.ph b{font-weight:700}
             <table>
               <thead><tr>
                 <th>Дата</th><th>Имя</th><th>Телефон</th><th>Сообщение</th>
-                <th>Сайт</th><th>Форма</th><th>Статус</th><th></th>
+                <th>Форма</th><th>Статус</th><th></th>
               </tr></thead>
               <tbody id="tb"></tbody>
             </table>
@@ -244,9 +243,7 @@ td.ph b{font-weight:700}
         <div class="panel">
           <div class="ph"><h3>Подключения</h3></div>
           <div class="row"><div class="lb">Хранилище заявок</div><div class="vl" id="sStore">—</div></div>
-          <div class="row"><div class="lb">Сайт (тег)</div><div class="vl">mielecentr</div></div>
-          <div class="row"><div class="lb">Источник в уведомлении</div><div class="vl">Сайт Miele (Москва)</div></div>
-          <div class="row"><div class="lb">Получатели уведомлений</div><div class="vl" id="sChats">—</div></div>
+          <div class="row"><div class="lb">Уведомления</div><div class="vl" id="sChats">—</div></div>
           <div class="row"><div class="lb">Проверка связи</div><div class="vl">
             <button class="btn sm" id="btnTest">Отправить тестовое уведомление</button>
             <div class="hint" id="testRes"></div></div></div>
@@ -290,14 +287,13 @@ td.ph b{font-weight:700}
 /* ==================== конфиг, подставленный сборкой ==================== */
 var CFG = {
   pw: "K9#mR2$vLp7!zQx4",
-  storePws: ["K9#mR2$vLp7!zQx4", "holodok2026"],
+  storePws: ["SzkjbVIyJHZMcDchelF4NA==", "aG9sb2RvazIwMjY="],
   sbUrl: "aHR0cHM6Ly93ZWRlZmx2b3J5ZmRrenVvZGd6Zy5zdXBhYmFzZS5jbw==",
   sbKey: "c2JfcHVibGlzaGFibGVfNk1COTBaLU1zNXdGeEFNdFJNUGEyd182LWNlOFFvdg==",
   tgToken: "ODM2MzEzODk3MDpBQUdJUVVpaWZkME81Yno0cVpoNEdSeklYVEJOVTdmMjlhQQ==",
   tgChats: ["8723283117", "731734894"],
   site: "mielecentr",
   source: "Сайт Miele (Москва)",
-  names: {"mielecentr": "Сайт Miele (Москва)", "holodok": "Сайт Tylo (Челябинск)"},
   phone: "+7 (903) 559-00-40"
 };
 function b64d(s){ try { return s ? atob(s) : ""; } catch(e){ return ""; } }
@@ -306,7 +302,7 @@ var LOCAL_KEY = "leads_" + (CFG.site || "site");
 var HAS_SB = !!(SB_URL && SB_KEY);
 
 /* ==================== состояние ==================== */
-var ALL = [], VIEW = [], filter = {status:"", q:"", src:"", site:"", sort:"desc"}, current = null, mode = "local";
+var ALL = [], VIEW = [], filter = {status:"", q:"", src:"", sort:"desc"}, current = null, mode = "local";
 
 /* ==================== утилиты ==================== */
 function $(s){ return document.querySelector(s); }
@@ -319,7 +315,12 @@ function uid(){ if (window.crypto && crypto.randomUUID) { try { return crypto.ra
 function fmt(d){ if (!d) return "—"; var x = new Date(d); if (isNaN(x)) return "—";
   var p = function(n){ return n < 10 ? "0" + n : "" + n; };
   return p(x.getDate()) + "." + p(x.getMonth() + 1) + "." + x.getFullYear() + " " + p(x.getHours()) + ":" + p(x.getMinutes()); }
-function leadSite(l){ return l.site || l.utm || ""; }
+var MY_MARK = new RegExp("miele", "i");   // как опознать «свои» старые заявки (до введения тегов)
+function leadSite(l){
+  if (l.site) return l.site;
+  if (l.utm) return l.utm;
+  return MY_MARK.test((l.page || "") + " " + (l.source || "")) ? CFG.site : "";
+}
 var ST = {new:["Новая","new"], work:["В работе","work"], done:["Завершена","done"], cancel:["Отменена","cancel"]};
 
 /* ==================== хранилище ==================== */
@@ -328,9 +329,11 @@ function sbHeaders(){ return {apikey: SB_KEY, Authorization: "Bearer " + SB_KEY,
 
 // Пароль хранилища может отличаться от пароля входа (он вшит в SQL-функцию).
 // Пробуем по очереди — так админка живёт и со старым, и с новым SQL.
+var STORE_PWS = (CFG.storePws || []).map(b64d).filter(Boolean);
+if (CFG.pw && STORE_PWS.indexOf(CFG.pw) === -1) STORE_PWS.unshift(CFG.pw);
 var _triedPw = 0;
 function rpc(action, id, value){
-  var pws = (CFG.storePws && CFG.storePws.length) ? CFG.storePws.slice() : [CFG.pw];
+  var pws = STORE_PWS.length ? STORE_PWS : [CFG.pw];
   function attempt(i){
     if (i >= pws.length) return Promise.reject(new Error("Хранилище отказало в доступе"));
     return fetch(SB_URL + "/rest/v1/rpc/admin_leads", {method: "POST", headers: sbHeaders(),
@@ -352,11 +355,14 @@ function localGet(){ try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || 
 function localSet(a){ localStorage.setItem(LOCAL_KEY, JSON.stringify(a)); }
 
 function loadLeads(){
-  if (!HAS_SB) { mode = "local"; ALL = localGet(); return Promise.resolve(); }
+  var onlyMine = function(list){
+    return (list || []).filter(function(l){ return leadSite(l) === CFG.site; });
+  };
+  if (!HAS_SB) { mode = "local"; ALL = onlyMine(localGet()); return Promise.resolve(); }
   return rpc("list").then(function(o){
-    ALL = o.leads || []; mode = "sb";
+    ALL = onlyMine(o.leads); mode = "sb";
   }).catch(function(e){
-    mode = "local"; ALL = localGet();
+    mode = "local"; ALL = onlyMine(localGet());
     toast("Хранилище недоступно — локальный режим");
     console.warn(e);
   });
@@ -396,8 +402,7 @@ function setLeadField(id, action, value){
 
 /* ==================== Telegram ==================== */
 function srcName(l, extra){
-  var tag = l.site || "";
-  var base = (CFG.names && CFG.names[tag]) || CFG.source || tag || CFG.site;
+  var base = CFG.source || CFG.site;
   if (extra) return base + " · " + extra;
   return base || "—";
 }
@@ -442,7 +447,6 @@ function applyFilter(){
   VIEW = ALL.filter(function(l){
     if (filter.status && (l.status || "new") !== filter.status) return false;
     if (filter.src && (l.source || "") !== filter.src) return false;
-    if (filter.site && leadSite(l) !== filter.site) return false;
     if (q) {
       var s = ((l.name || "") + " " + (l.phone || "") + " " + (l.message || "") + " " + (l.comment || "")).toLowerCase();
       if (s.indexOf(q) === -1) return false;
@@ -467,7 +471,6 @@ function renderTable(){
       '<td>' + (esc(l.name) || '<span style="color:#9aa1ab">—</span>') + '</td>' +
       '<td class="ph"><b><a href="tel:' + esc((l.phone || "").replace(/[^\d+]/g, "")) + '">' + esc(l.phone) + '</a></b></td>' +
       '<td class="msg">' + (esc(l.message) || "—") + '</td>' +
-      '<td><span class="tag">' + esc(leadSite(l) || "—") + '</span></td>' +
       '<td>' + esc(l.source || "—") + '</td>' +
       '<td><span class="st ' + s[1] + '" data-act="st">' + s[0] + '</span></td>' +
       '<td class="acts">' +
@@ -479,10 +482,9 @@ function renderTable(){
 }
 
 function fillSelects(){
-  var srcs = {}, sites = {};
-  ALL.forEach(function(l){ if (l.source) srcs[l.source] = 1; if (leadSite(l)) sites[leadSite(l)] = 1; });
+  var srcs = {};
+  ALL.forEach(function(l){ if (l.source) srcs[l.source] = 1; });
   keepSel($("#fSrc"), Object.keys(srcs).sort(), "Все источники");
-  keepSel($("#fSite"), Object.keys(sites).sort(), "Все сайты");
 }
 function keepSel(sel, list, all){
   var cur = sel.value;
@@ -525,7 +527,6 @@ function openLead(id){
     row("Телефон", '<a href="tel:' + esc((l.phone || "").replace(/[^\d+]/g, "")) + '">' + esc(l.phone) + '</a>') +
     row("Сообщение", esc(l.message) || "—") +
     row("Форма", esc(l.source) || "—") +
-    row("Сайт", esc(leadSite(l)) || "—") +
     row("Страница", l.page ? '<a href="' + esc(l.page) + '" target="_blank" rel="noopener">' + esc(l.page) + '</a>' : "—") +
     row("Статус", '<span class="st ' + (ST[st] || ST.new)[1] + '">' + (ST[st] || ST.new)[0] + '</span>') +
     '<label>Комментарий</label><textarea id="dComment">' + esc(l.comment || "") + '</textarea>' +
@@ -581,7 +582,6 @@ function switchView(v){
 
 $("#q").addEventListener("input", function(){ filter.q = this.value; applyFilter(); });
 $("#fSrc").addEventListener("change", function(){ filter.src = this.value; applyFilter(); });
-$("#fSite").addEventListener("change", function(){ filter.site = this.value; applyFilter(); });
 $("#sort").addEventListener("change", function(){ filter.sort = this.value; applyFilter(); });
 $("#chips").addEventListener("click", function(e){
   var c = e.target.closest(".chip"); if (!c) return;
@@ -630,11 +630,11 @@ $("#mSave").addEventListener("click", function(){
 /* CSV */
 $("#btnCsv").addEventListener("click", function(){
   if (!VIEW.length) { toast("Нечего экспортировать"); return; }
-  var head = ["Дата", "Имя", "Телефон", "Сообщение", "Форма", "Сайт", "Статус", "Комментарий"];
+  var head = ["Дата", "Имя", "Телефон", "Сообщение", "Форма", "Статус", "Комментарий"];
   var lines = [head.join(";")];
   VIEW.forEach(function(l){
     lines.push([fmt(l.created_at || l.createdAt), l.name || "", l.phone || "", l.message || "",
-                l.source || "", leadSite(l), (ST[l.status || "new"] || ST.new)[0], l.comment || ""]
+                l.source || "", (ST[l.status || "new"] || ST.new)[0], l.comment || ""]
       .map(function(v){ return '"' + String(v).replace(/"/g, '""') + '"'; }).join(";"));
   });
   var blob = new Blob(["\ufeff" + lines.join("\r\n")], {type: "text/csv;charset=utf-8"});
@@ -649,7 +649,8 @@ function enter(){
   if ($("#pw").value !== CFG.pw) { $("#loginErr").textContent = "Неверный пароль"; return; }
   $("#login").classList.add("hide"); $("#app").classList.remove("hide");
   $("#sStore").textContent = HAS_SB ? "Supabase (общее хранилище)" : "Локально в этом браузере";
-  $("#sChats").textContent = (CFG.tgChats || []).join(", ") || "не настроены";
+  $("#sChats").textContent = (CFG.tgChats || []).length
+    ? "включены, получателей: " + CFG.tgChats.length : "не настроены";
   loadLeads().then(function(){
     $("#modeDot").classList.toggle("off", mode !== "sb");
     $("#modeTxt").textContent = mode === "sb" ? "хранилище подключено" : "локальный режим";
