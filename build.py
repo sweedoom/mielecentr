@@ -462,6 +462,22 @@ lead_js = lead_js.replace("__TG_FN__", tg_fn).replace("__FALLBACK__", fallback)
 lead_js = lead_js.replace("__EMAIL__", cfg["email"])
 
 h = h.replace("</head>", "".join(head_add) + css_html + "</head>")
+
+# мелкие визуальные правки: fancybox-триггеры вместо javascript:; и стиль для строки юрлица
+h = h.replace('href="javascript:;"', 'href="#"')          # чище URL, fancybox всё равно перехватит по data-fancybox
+h = h.replace(
+    "</head>",
+    "<style>"
+    "p.legal{color:#888;font-size:13px;margin:8px 0 0;line-height:1.4}"
+    # мобильный фолбэк: оригинальный шаблон задаёт подвалу ширину больше вьюпорта
+    "@media (max-width:768px){"
+    "html,body{overflow-x:hidden}"
+    "footer #footer_top_main,footer #footer_bottom_main{max-width:100%;box-sizing:border-box;padding:0 12px}"
+    "footer .kontakty,footer .company,footer .proekty,footer .dopmenu{width:100%;float:none;margin:0 0 12px}"
+    "footer img[width]{max-width:100%;height:auto}"
+    "}"
+    "</style></head>")
+
 h = h.replace("</body>", js_html + lead_js + "</body>")
 
 # ------------------------------------------------------------------ запись
