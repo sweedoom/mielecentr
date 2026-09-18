@@ -3,7 +3,7 @@
 Сборка лендинга «ремонт техники Miele» из копии msk.mielecentr.ru.
 Правишь config.json -> python build.py -> готовый сайт в docs/
 """
-import json, os, re, shutil, sys, base64
+import json, os, re, shutil, sys, base64, subprocess
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
@@ -74,8 +74,22 @@ def copy_assets():
 
 
 def make_logo(path):
-    """Логотип в две строки. Пустой brand → подпись из cfg.logoText/logoText2
-    (или из tagline), а не пустой прямоугольник."""
+    """Логотип собирает logo.py: он измеряет текст настоящим движком браузера,
+    поэтому строки ровные и ничего не обрезается. Если Playwright недоступен —
+    грубый fallback по той же формуле."""
+    venv_py = r"C:\Users\Cypher\.workbuddy-ai\binaries\python\envs\default\Scripts\python.exe"
+    py = venv_py if os.path.isfile(venv_py) else sys.executable
+    try:
+        r = subprocess.run([py, os.path.join(ROOT, "logo.py")],
+                           check=True, cwd=ROOT, capture_output=True, text=True)
+        for line in (r.stdout or "").strip().splitlines():
+            log("  " + line.strip())
+        if os.path.isfile(path):
+            log("[logo] создан (точная подгонка): %s" % cfg.get("logo", "assets/logo.svg"))
+            return
+    except Exception as e:
+        log("[logo] logo.py недоступен (%s) — грубый расчёт" % str(e)[:80])
+
     t1 = (cfg.get("brand") or "").strip()
     if t1:
         lines = [t1]
@@ -86,17 +100,18 @@ def make_logo(path):
     fs = 19 if len(lines) > 1 else 20
     lh = 22
     h_px = 16 + lh * len(lines) + 10
-    w = max(220, 16 + max(len(s) for s in lines) * int(fs * 0.62) + 20)
+    w = max(220, 16 + max(len(s) for s in lines) * int(fs * 0.68) + 24)
     texts = "".join(
-        f'<text x="14" y="{16 + lh * i + 4}" font-family="Arial, sans-serif" font-size="{fs}"'
-        f' font-weight="700" fill="#ffffff">{s}</text>' for i, s in enumerate(lines))
+        f'<text x="20" y="{16 + lh * i + 4}" font-family="Arial, sans-serif" font-size="{fs}"'
+        f' font-weight="700" fill="#ffffff" textLength="{min(len(s) * fs * 0.66, w - 32):.0f}"'
+        f' lengthAdjust="spacingAndGlyphs">{s}</text>' for i, s in enumerate(lines))
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h_px}" viewBox="0 0 {w} {h_px}">'
-        f'<rect width="{w}" height="{h_px}" rx="8" fill="{ACCENT}"/>{texts}</svg>')
+        f'<rect width="{w}" height="{h_px}" rx="10" fill="{ACCENT}"/>{texts}</svg>')
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
-    log("[logo] создан assets/logo.svg")
+    log("[logo] создан (fallback)")
 
 
 # ------------------------------------------------------------------ html
@@ -552,7 +567,13 @@ if os.path.isfile(adm_src):
     tpl = open(adm_src, encoding="utf-8").read()
     b64 = lambda x: base64.b64encode(str(x).encode()).decode()
     _chats = json.dumps(_TG_CHATS if _USE_TG else [])
-    tpl = (tpl.replace("@LEADS_BACKEND@", _adm_url)
+    _pws, _seen = [], set()
+    for _p in (A.get("storePassword") or "", A.get("password") or "", "holodok2026"):
+        if _p and _p not in _seen:
+            _seen.add(_p)
+            _pws.append(_p)
+    tpl = (tpl.replace("@STORE_PWS@", json.dumps(_pws, ensure_ascii=False))
+              .replace("@LEADS_BACKEND@", _adm_url)
               .replace("@SB_URL_B64@", b64(_sb.get("url", "")))
               .replace("@SB_KEY_B64@", b64(_sb.get("anonKey", "")))
               .replace("@TG_TOKEN_B64@", b64(L.get("telegramBotToken", "") if _USE_TG else ""))

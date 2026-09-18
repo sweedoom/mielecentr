@@ -50,7 +50,10 @@ language plpgsql security definer set search_path = public
 as $$
 declare rows jsonb; n integer;
 begin
-  if p_password is null or p_password <> 'holodok2026' then
+  -- пароль хранилища. ОДИН на все сайты (бот-то один).
+  -- Старый SQL мог быть с 'holodok2026' — админка пробует оба варианта, так что
+  -- если не будешь перевыполнять этот файл, всё продолжит работать как раньше.
+  if p_password is null or p_password <> 'K9#mR2$vLp7!zQx4' then
     return jsonb_build_object('ok', false, 'error', 'Неверный пароль');
   end if;
   if p_action = 'list' then

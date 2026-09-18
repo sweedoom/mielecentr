@@ -170,7 +170,7 @@ td.ph b{font-weight:700}
 <div id="app" class="hide">
   <aside class="side">
     <div class="brand">
-      <span class="lg">Фирменный сервисный центр</span>
+      <span class="lg">Фирменный сервисный</span>
       <span class="sm">Фирменный сервисный центр техники Miele</span>
     </div>
     <nav>
@@ -289,7 +289,8 @@ td.ph b{font-weight:700}
 <script>
 /* ==================== конфиг, подставленный сборкой ==================== */
 var CFG = {
-  pw: "holodok2026",
+  pw: "K9#mR2$vLp7!zQx4",
+  storePws: ["K9#mR2$vLp7!zQx4", "holodok2026"],
   sbUrl: "aHR0cHM6Ly93ZWRlZmx2b3J5ZmRrenVvZGd6Zy5zdXBhYmFzZS5jbw==",
   sbKey: "c2JfcHVibGlzaGFibGVfNk1COTBaLU1zNXdGeEFNdFJNUGEyd182LWNlOFFvdg==",
   tgToken: "ODM2MzEzODk3MDpBQUdJUVVpaWZkME81Yno0cVpoNEdSeklYVEJOVTdmMjlhQQ==",
@@ -325,15 +326,26 @@ var ST = {new:["Новая","new"], work:["В работе","work"], done:["За
 function sbHeaders(){ return {apikey: SB_KEY, Authorization: "Bearer " + SB_KEY,
   "Content-Type": "application/json"}; }
 
+// Пароль хранилища может отличаться от пароля входа (он вшит в SQL-функцию).
+// Пробуем по очереди — так админка живёт и со старым, и с новым SQL.
+var _triedPw = 0;
 function rpc(action, id, value){
-  return fetch(SB_URL + "/rest/v1/rpc/admin_leads", {method: "POST", headers: sbHeaders(),
-    body: JSON.stringify({p_password: CFG.pw, p_action: action, p_id: id || null, p_value: value || null})
-  }).then(function(r){ return r.json(); }).then(function(j){
-    var o = Array.isArray(j) ? j[0] : j;
-    o = (o && o.admin_leads) ? o.admin_leads : o;
-    if (!o || o.ok === false) throw new Error((o && o.error) || "Отказ хранилища");
-    return o;
-  });
+  var pws = (CFG.storePws && CFG.storePws.length) ? CFG.storePws.slice() : [CFG.pw];
+  function attempt(i){
+    if (i >= pws.length) return Promise.reject(new Error("Хранилище отказало в доступе"));
+    return fetch(SB_URL + "/rest/v1/rpc/admin_leads", {method: "POST", headers: sbHeaders(),
+      body: JSON.stringify({p_password: pws[i], p_action: action, p_id: id || null, p_value: value || null})
+    }).then(function(r){ return r.json(); }).then(function(j){
+      var o = Array.isArray(j) ? j[0] : j;
+      o = (o && o.admin_leads) ? o.admin_leads : o;
+      if (!o || o.ok === false) {
+        if (/парол/i.test((o && o.error) || "")) { _triedPw = i + 1; return attempt(i + 1); }
+        throw new Error((o && o.error) || "Отказ хранилища");
+      }
+      return o;
+    });
+  }
+  return attempt(_triedPw < pws.length ? _triedPw : 0);
 }
 
 function localGet(){ try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); } catch(e){ return []; } }

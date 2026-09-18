@@ -15,8 +15,8 @@
     "accentDark": "#7a0008",
     "_comment": "Акцентный цвет сайта. accentaDark - для градиентов и hover"
   },
-  "siteUrl": "https://sweedoom.github.io/mielecentr/",
-  "domain": "",
+  "siteUrl": "https://miele-technika.ru/",
+  "domain": "miele-technika.ru",
   "_domain_comment": "Свой домен (например miele-remont.ru). Пока пусто - сайт живёт на GitHub Pages",
   "phonePretty": "+7 (903) 559-00-40",
   "phoneRaw": "+79035590040",
@@ -100,10 +100,12 @@
     "_comment": "Свои счётчики: yandex: [\"12345678\"], gtag: \"G-XXXXXXX\". Пусто = чужие счётчики вырезаны."
   },
   "admin": {
-    "page": "admin-a7f3c9.html",
-    "_page_comment": "Адрес админки. Специально неочевидный - её никто не найдёт",
-    "password": "holodok2026",
-    "_password_comment": "Пароль входа в админку",
+    "page": "panel-m7k2.html",
+    "_page_comment": "Адрес админки этого сайта. У каждого сайта СВОЙ адрес и свой вид; бот один на всех",
+    "password": "K9#mR2$vLp7!zQx4",
+    "_password_comment": "Пароль входа в админку (сложный). Меняешь тут -> пересобрать",
+    "storePassword": "K9#mR2$vLp7!zQx4",
+    "_storePassword_comment": "Пароль хранилища (один на оба сайта, вшит в функцию admin_leads). Пароль ВХОДА в эту админку — свой, см. выше",
     "supabase": {
       "url": "https://wedeflvoryfdkzuodgzg.supabase.co",
       "anonKey": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"
@@ -126,9 +128,10 @@
   },
   "brandPhrase": "Фирменный сервисный центр техники Miele",
   "_brandPhrase_comment": "Как называем сервисный центр в текстах и заголовке",
-  "logoText": "Фирменный сервисный центр",
-  "logoText2": "техники Miele",
-  "logoWidth": 230,
+  "logoText": "Фирменный сервисный",
+  "logoText2": "центр техники Miele",
+  "logoWidth": 250,
+  "logoPad": 14,
   "_logo_comment": "Две строки логотипа и ширина картинки в шапке/подвале",
   "footerLegal": true,
   "_footerLegal_comment": "true = в подвале строка «Юрлицо: ООО «ХОЛОДОК», ИНН ...» со ссылкой на реквизиты"

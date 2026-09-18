@@ -8,7 +8,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DOCS = os.path.join(ROOT, "docs")
 PORT = 8903
 BASE = f"http://127.0.0.1:{PORT}/"
-PAGE = "admin-a7f3c9.html"
+_cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
+PAGE = (_cfg.get("admin", {}) or {}).get("page") or "admin.html"
+PW = (_cfg.get("admin", {}) or {}).get("password") or ""
 
 LEADS = [
     {"id": "11111111-1111-1111-1111-111111111111", "created_at": "2026-09-16T10:20:00+00:00",
@@ -52,7 +54,7 @@ async def main():
 
             await pg.goto(BASE + PAGE, wait_until="networkidle", timeout=60000)
             await pg.screenshot(path=os.path.join(ROOT, "adm_login.png"))
-            await pg.fill("#pw", "holodok2026")
+            await pg.fill("#pw", PW)
             await pg.click("#loginBtn")
             await pg.wait_for_timeout(1200)
             await pg.screenshot(path=os.path.join(ROOT, "adm_leads.png"))

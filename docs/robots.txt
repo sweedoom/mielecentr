@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /admin-a7f3c9.html
+Disallow: /panel-m7k2.html
 Disallow: /bitrix/
 Disallow: /upload/
 
-Sitemap: https://sweedoom.github.io/mielecentr/sitemap.xml
-Host: https://sweedoom.github.io/mielecentr/
+Sitemap: https://miele-technika.ru/sitemap.xml
+Host: https://miele-technika.ru/
