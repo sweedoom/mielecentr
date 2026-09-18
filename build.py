@@ -41,14 +41,25 @@ def copy_assets():
 
 
 def make_logo(path):
-    # brand пустой → рисуем нейтральную подпись, а не пустой прямоугольник
-    text = (cfg.get("brand") or "").strip() or cfg.get("tagline") or "Сервисный центр"
-    w = max(220, 16 + len(text) * 12 + 16)
+    """Логотип в две строки. Пустой brand → подпись из cfg.logoText/logoText2
+    (или из tagline), а не пустой прямоугольник."""
+    t1 = (cfg.get("brand") or "").strip()
+    if t1:
+        lines = [t1]
+    else:
+        lines = [cfg.get("logoText") or cfg.get("tagline") or "Сервисный центр"]
+        if cfg.get("logoText2"):
+            lines.append(cfg["logoText2"])
+    fs = 19 if len(lines) > 1 else 20
+    lh = 22
+    h_px = 16 + lh * len(lines) + 10
+    w = max(220, 16 + max(len(s) for s in lines) * int(fs * 0.62) + 20)
+    texts = "".join(
+        f'<text x="14" y="{16 + lh * i + 4}" font-family="Arial, sans-serif" font-size="{fs}"'
+        f' font-weight="700" fill="#ffffff">{s}</text>' for i, s in enumerate(lines))
     svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="48" viewBox="0 0 {w} 48">'
-        f'<rect width="{w}" height="48" rx="8" fill="#00966D"/>'
-        f'<text x="16" y="31" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#ffffff">{text}</text>'
-        "</svg>")
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h_px}" viewBox="0 0 {w} {h_px}">'
+        f'<rect width="{w}" height="{h_px}" rx="8" fill="#00966D"/>{texts}</svg>')
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
@@ -218,6 +229,24 @@ h = re.sub(r'href="politika\.html">Политика конфиденциальн
            'href="politika.html">Политика конфиденциальности</a>\n'
            '<a href="requisites.html">Реквизиты</a>', h, count=1)
 
+# 8b. ссылка «Карта сайта» вела в несуществующий раздел — убираем её совсем
+h = re.sub(r'<a\s*>(?:(?!</a>).)*?Карта сайта\s*</a>', '', h, flags=re.S)
+
+# 8c. юрлицо в подвале: «Юрлицо: ООО «ХОЛОДОК», ИНН 7452172713»
+if cfg.get("footerLegal", True):
+    CO = cfg.get("company", {}) or {}
+    bits = []
+    if CO.get("shortName"):
+        bits.append("Юрлицо: " + CO["shortName"])
+    if CO.get("inn"):
+        bits.append("ИНН " + CO["inn"])
+    if bits:
+        legal = ", ".join(bits)
+        h, k = re.subn(r'(<a href="requisites\.html">Реквизиты</a>)',
+                       r'\1<br><p class="legal">%s</p>' % legal, h, count=1)
+        if k:
+            log(f"[legal] в подвал добавлено: {legal}")
+
 # 9. якорь для блока услуг
 h = h.replace('<div class="uslugi_index">', '<div class="uslugi_index" id="uslugi">', 1)
 
@@ -234,16 +263,20 @@ if B:
     h = h.replace("Miele Центр", B)
     h = h.replace("Miele Service", B)
 else:
-    # названия компании нет — нейтральные формулировки, без выдуманного бренда
-    h = h.replace("Сервисный центр Miele (Миле)  в", "Сервисный центр Miele (Миле) в")
-    h = h.replace("Сервисный центр Miele  в", "Сервисный центр в")
+    # названия компании нет — используем формулировку из cfg.brandPhrase
+    PH = (cfg.get("brandPhrase") or "Сервисный центр").strip()
+    PH_l = PH[0].lower() + PH[1:]          # для серединки предложения
+    h = h.replace("Сервисный центр Miele (Миле)  в", PH + " в")
+    h = h.replace("Сервисный центр Miele (Миле) в", PH + " в")
+    h = h.replace("Сервисный центр Miele  в", PH + " в")
     h = h.replace("Miele (Миле)  ", "Miele (Миле) ")  # двойные пробелы из исходника
-    h = h.replace("Сервисный центр Miele Center", "Наш сервисный центр")
-    h = h.replace("сервисный центр Miele Center", "наш сервисный центр")
-    h = h.replace("В Miele Center", "В нашем сервисном центре")
-    h = h.replace("Miele Center", "Сервисный центр")
-    h = h.replace("Miele Центр", "Сервисный центр")
-    h = h.replace("Miele Service", "Сервис")
+    h = h.replace("Miele Service кнопка домой", "Кнопка домой")
+    h = h.replace("Сервисный центр Miele Center", PH)
+    h = h.replace("сервисный центр Miele Center", PH_l)
+    h = h.replace("В Miele Center", "В " + PH_l)
+    h = h.replace("Miele Center", PH)
+    h = h.replace("Miele Центр", PH)
+    h = h.replace("Miele Service", PH)
 slug = (cfg.get("brandSlug") or "").strip()
 if slug:
     h = h.replace("mielecentr", slug)
@@ -274,10 +307,12 @@ if not addr:
     log("[addr] адрес не задан — все блоки с адресом вырезаны")
 h = h.replace("Ежедневно: с 08:00 до 00:00", cfg["workHours"])
 
-# 14. логотип
+# 14. логотип (ширина картинки — из cfg.logoWidth, чтобы длинная подпись влезла)
 h = h.replace('src="log2.svg"', f'src="{cfg["logo"]}"')
 h = h.replace('src="log.svg"', f'src="{cfg["logo"]}"')
 h = h.replace('src="favicon.png"', f'src="{cfg.get("favicon", "favicon.png")}"')
+_lw = int(cfg.get("logoWidth") or 230)
+h = re.sub(r'(<img style="width: )130(px;" src="assets/logo\.svg")', rf'\g<1>{_lw}\g<2>', h)
 
 # ------------------------------------------------------------------ инъекции
 head_add = ['<script>window.BX=window.BX||{message:function(){},ready:function(f){jQuery(f);}};</script>']
