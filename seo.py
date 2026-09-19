@@ -26,7 +26,8 @@ def main():
     )
     open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8").write(robots)
 
-    pages = [("index.html", "1.0"), ("politika.html", "0.3"), ("soglasie.html", "0.3")]
+    pages = [("index.html", "1.0"), ("politika.html", "0.3"),
+             ("soglasie.html", "0.3"), ("requisites.html", "0.2")]
     urls = "".join(
         f"  <url>\n    <loc>{SITE}{p}</loc>\n    <lastmod>{TODAY}</lastmod>\n"
         f"    <priority>{pr}</priority>\n  </url>\n" for p, pr in pages)

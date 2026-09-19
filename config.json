@@ -2,7 +2,7 @@
   "_comment": "ВСЕ ДАННЫЕ САЙТА ЗДЕСЬ. Поменял -> python build.py -> git push. Больше ничего трогать не надо.",
   "brand": "",
   "brandSlug": "",
-  "siteName": "Фирменный сервисный центр техники Miele",
+  "siteName": "Сервисный центр по ремонту техники Miele",
   "siteTag": "mielecentr",
   "_siteTag_comment": "Короткий тег сайта - подставляется в заявки, чтобы понимать, откуда пришла заявка",
   "sourceNames": {
@@ -15,9 +15,9 @@
     "accentDark": "#7a0008",
     "_comment": "Акцентный цвет сайта. accentaDark - для градиентов и hover"
   },
-  "siteUrl": "https://linar.me/mielecentr/",
-  "domain": "",
-  "_domain_comment": "Свой домен. КУПИШЬ miele-technika.ru -> сюда вписать, тогда CNAME создастся сам. Пока пусто - сайт живёт на linar.me/mielecentr",
+  "siteUrl": "https://miele-technika.ru/",
+  "domain": "miele-technika.ru",
+  "_domain_comment": "Свой домен подключён: DNS A/CNAME ведут на GitHub Pages, build.py создаёт docs/CNAME",
   "phonePretty": "+7 (903) 559-00-40",
   "phoneRaw": "+79035590040",
   "email": "nat89323081717@yandex.ru",
@@ -39,6 +39,13 @@
   "rating": 4.9,
   "reviews": 738,
   "logo": "assets/logo.svg",
+  "logoFooter": "assets/logo-footer.svg",
+  "logoWord": "Miele",
+  "logoSub": "Сервисный центр по ремонту техники",
+  "logoWordSize": 52,
+  "logoSubSize": 10,
+  "logoSubTracking": 1.2,
+  "_logo_comment": "Логотип: слово Miele + красная точка, снизу подпись разрядкой. logo.svg - шапка (тёмный), logo-footer.svg - футер (светлый)",
   "favicon": "favicon.png",
   "tagline": "Сервисный центр",
   "policyDate": "2026-09-16",
@@ -102,12 +109,9 @@
   "admin": {
     "page": "panel-m7k2.html",
     "_page_comment": "Адрес админки этого сайта. У каждого сайта СВОЙ адрес и свой вид; бот один на всех",
-    "password": "K9#mR2$vLp7!zQx4",
-    "_password_comment": "Пароль входа в админку (сложный). Меняешь тут -> пересобрать",
+    "_auth_comment": "Вход через Supabase Auth. Пароли задаются владельцем на сервере, не в файлах сайта.",
     "siteMark": "miele",
     "_siteMark_comment": "Как опознать СВОИ старые заявки (до введения тегов) - по слову в адресе страницы. Только про этот сайт, чужих упоминаний тут нет",
-    "storePassword": "K9#mR2$vLp7!zQx4",
-    "_storePassword_comment": "Пароль хранилища (один на оба сайта, вшит в функцию admin_leads). Пароль ВХОДА в эту админку — свой, см. выше",
     "supabase": {
       "url": "https://wedeflvoryfdkzuodgzg.supabase.co",
       "anonKey": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"
@@ -116,25 +120,14 @@
     "backendUrl": ""
   },
   "leads": {
-    "mode": "telegram",
-    "_modes": "telegram | backend | endpoint | mailto",
-    "telegramBotToken": "8363138970:AAGIQUiifd0O5bz4qZh4GRzIXTBNU7f29aA",
-    "telegramChatIds": [
-      "8723283117",
-      "731734894"
-    ],
-    "_chatIds_comment": "Кому приходят заявки в Telegram",
+    "mode": "server",
+    "_comment": "Приём через серверную функцию. Уведомления настраиваются только владельцем в секретах сервера.",
     "sourceName": "Сайт Miele (Москва)",
     "_sourceName_comment": "Строка «Источник» в сообщении бота. К боту привязано несколько сайтов - по ней видно, откуда заявка",
     "endpoint": ""
   },
-  "brandPhrase": "Фирменный сервисный центр техники Miele",
+  "brandPhrase": "Сервисный центр по ремонту техники Miele",
   "_brandPhrase_comment": "Как называем сервисный центр в текстах и заголовке",
-  "logoText": "Фирменный сервисный",
-  "logoText2": "центр техники Miele",
-  "logoWidth": 230,
-  "logoPad": 8,
-  "_logo_comment": "Две строки логотипа и ширина картинки в шапке/подвале",
   "footerLegal": true,
   "_footerLegal_comment": "true = в подвале строка «Юрлицо: ООО «ХОЛОДОК», ИНН ...» со ссылкой на реквизиты"
 }

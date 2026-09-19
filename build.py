@@ -3,7 +3,14 @@
 Сборка лендинга «ремонт техники Miele» из копии msk.mielecentr.ru.
 Правишь config.json -> python build.py -> готовый сайт в docs/
 """
-import json, os, re, shutil, sys, base64, subprocess
+import json, os, re, shutil, sys, subprocess
+from pathlib import Path
+# Общий помощник сборки: клиент заявок и админка. Подключается по пути
+# ../backend ТОЛЬКО во время сборки (в docs/ из backend ничего не копируется).
+_BACKEND_DIR = Path(__file__).resolve().parent.parent / "backend"
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
+import build_clients  # noqa: E402
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
@@ -75,42 +82,43 @@ def copy_assets():
 
 def make_logo(path):
     """Логотип собирает logo.py: он измеряет текст настоящим движком браузера,
-    поэтому строки ровные и ничего не обрезается. Если Playwright недоступен —
-    грубый fallback по той же формуле."""
-    venv_py = r"C:\Users\Cypher\.workbuddy-ai\binaries\python\envs\default\Scripts\python.exe"
-    py = venv_py if os.path.isfile(venv_py) else sys.executable
+    поэтому подпись точно совпадает по ширине со словом. Если Playwright
+    недоступен — грубый fallback того же дизайна."""
+    py = sys.executable  # тот же интерпретатор, что запустил build.py
     try:
         r = subprocess.run([py, os.path.join(ROOT, "logo.py")],
                            check=True, cwd=ROOT, capture_output=True, text=True)
         for line in (r.stdout or "").strip().splitlines():
             log("  " + line.strip())
         if os.path.isfile(path):
-            log("[logo] создан (точная подгонка): %s" % cfg.get("logo", "assets/logo.svg"))
             return
     except Exception as e:
         log("[logo] logo.py недоступен (%s) — грубый расчёт" % str(e)[:80])
 
-    t1 = (cfg.get("brand") or "").strip()
-    if t1:
-        lines = [t1]
-    else:
-        lines = [cfg.get("logoText") or cfg.get("tagline") or "Сервисный центр"]
-        if cfg.get("logoText2"):
-            lines.append(cfg["logoText2"])
-    fs = 19 if len(lines) > 1 else 20
-    lh = 22
-    h_px = 16 + lh * len(lines) + 10
-    w = max(220, 16 + max(len(s) for s in lines) * int(fs * 0.68) + 24)
-    texts = "".join(
-        f'<text x="20" y="{16 + lh * i + 4}" font-family="Arial, sans-serif" font-size="{fs}"'
-        f' font-weight="700" fill="#ffffff" textLength="{min(len(s) * fs * 0.66, w - 32):.0f}"'
-        f' lengthAdjust="spacingAndGlyphs">{s}</text>' for i, s in enumerate(lines))
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h_px}" viewBox="0 0 {w} {h_px}">'
-        f'<rect width="{w}" height="{h_px}" rx="10" fill="{ACCENT}"/>{texts}</svg>')
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(svg)
+    # fallback: слово + подпись, ширина по средней ширине символа
+    word = (cfg.get("logoWord") or "Miele").strip()
+    sub = (cfg.get("logoSub") or "Фирменный сервисный центр техники").strip().upper()
+    fs1 = float(cfg.get("logoWordSize") or 46)
+    tr = float(cfg.get("logoSubTracking") or 1.6)
+    w1 = len(word) * fs1 * 0.62
+    n = max(len(sub) - 1, 1)
+    fs2 = max(7.0, min(13.0, (w1 - n * tr) / (len(sub) * 0.62)))
+    w = round(max(w1, len(sub) * fs2 * 0.62 + n * tr) + 2)
+    y1, y2 = round(fs1 * 0.8), round(fs1 * 0.8 + fs1 * 0.14 + fs2 * 1.05)
+    h = y2 + 2
+    for kind, name in (("header", cfg.get("logo") or "assets/logo.svg"),
+                       ("footer", cfg.get("logoFooter") or "assets/logo-footer.svg")):
+        cw, cs = ("#1b1b1b", "#6d6d6d") if kind == "header" else ("#ffffff", "#a8a8a8")
+        svg = (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">'
+            f'<text x="0" y="{y1}" font-family="Arial, Helvetica, sans-serif" font-size="{fs1:.0f}" '
+            f'font-weight="700" letter-spacing="-0.5" fill="{cw}">{word}'
+            f'<tspan fill="{ACCENT}">.</tspan></text>'
+            f'<text x="0" y="{y2}" font-family="Arial, Helvetica, sans-serif" font-size="{fs2:.2f}" '
+            f'letter-spacing="{tr}" fill="{cs}">{sub}</text></svg>')
+        p = os.path.join(OUT, name.replace("/", os.sep))
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        open(p, "w", encoding="utf-8").write(svg)
     log("[logo] создан (fallback)")
 
 
@@ -355,12 +363,11 @@ if not addr:
     log("[addr] адрес не задан — все блоки с адресом вырезаны")
 h = h.replace("Ежедневно: с 08:00 до 00:00", cfg["workHours"])
 
-# 14. логотип (ширина картинки — из cfg.logoWidth, чтобы длинная подпись влезла)
+# 14. логотип: шапка и футер получают СВОИ версии (тёмная/светлая),
+#     фактические размеры подставим после генерации SVG (ниже, перед записью)
 h = h.replace('src="log2.svg"', f'src="{cfg["logo"]}"')
 h = h.replace('src="log.svg"', f'src="{cfg["logo"]}"')
 h = h.replace('src="favicon.png"', f'src="{cfg.get("favicon", "favicon.png")}"')
-_lw = int(cfg.get("logoWidth") or 230)
-h = re.sub(r'(<img style="width: )130(px;" src="assets/logo\.svg")', rf'\g<1>{_lw}\g<2>', h)
 
 # ------------------------------------------------------------------ инъекции
 head_add = ['<script>window.BX=window.BX||{message:function(){},ready:function(f){jQuery(f);}};</script>']
@@ -377,160 +384,9 @@ if cfg["counters"].get("gtag"):
                     f'<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}'
                     f'gtag("js",new Date());gtag("config","{g}");</script>')
 
-lead_js = """
-<script>
-window.SITE_LEADS = __LEADS__;
-(function(){
-  function collect(form){
-    var f = jQuery(form);
-    var t = jQuery.trim(f.find('.title').first().text());
-    return {
-      title: t || 'Заявка с сайта',
-      name: f.find('[name="form_name"]').val() || '',
-      phone: f.find('[name="form_phone"]').val() || '',
-      email: f.find('[name="form_email"]').val() || '',
-      message: f.find('[name="form_message"]').val() || '',
-      page: location.href
-    };
-  }
-  function ok(form){
-    var f = jQuery(form);
-    var box = f.find('.title').first();
-    var THANKS = '<div class="thanks_form" style="color:__ACCENT__;font-weight:700;padding:12px 0">'
-               + 'Спасибо! Заявка отправлена, мы перезвоним в течение 5 минут.</div>';
-    if (box.length) {
-      box.html(THANKS);
-    } else {
-      f.prepend(THANKS);
-    }
-    f.find('input, textarea').prop('disabled', true);
-    f.find('button').prop('disabled', true);
-    setTimeout(function(){ try { jQuery.fancybox.close(); } catch(e){} }, 1800);
-  }
-  function fail(form, msg){
-    var f = jQuery(form);
-    var err = f.find('[id^="garant_error"]').first();
-    if (err.length) { err.html(msg); } else { alert(msg); }
-  }
-__TG_FN__
-  function postLead(L, d){
-    if (!L.sb || !L.sb.url || !L.sb.key) return null;
-    var base = {name: d.name, phone: d.phone, message: d.message, source: d.title,
-                page: d.page, status: 'new', site: L.site || ''};
-    function send(payload){
-      return fetch(L.sb.url + '/rest/v1/leads', {
-        method: 'POST',
-        headers: {apikey: L.sb.key, Authorization: 'Bearer ' + L.sb.key,
-                  'Content-Type': 'application/json', Prefer: 'return=minimal'},
-        body: JSON.stringify(payload)
-      });
-    }
-    return send(base).then(function(r){
-      if (r && r.ok) return r;
-      // в старой схеме нет колонки site - кладём тег сайта в utm
-      var p2 = {};
-      for (var k in base) { if (k !== 'site') p2[k] = base[k]; }
-      p2.utm = L.site || '';
-      return send(p2);
-    }).catch(function(){ return null; });
-  }
-  jQuery(function($){
-    $(document).off('submit.leads').on('submit.leads', 'form.feedback', function(e){
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      var form = this, f = $(form), d = collect(form), L = window.SITE_LEADS;
-      var ch = f.find('input[type=checkbox]');
-      if (ch.length && !ch.prop('checked')) { fail(form, 'Необходимо дать согласие на обработку данных'); return false; }
-      var digits = (d.phone.match(/\\d+/g) || []).join('');
-      if (digits.length < 10) { fail(form, 'Введите номер телефона полностью'); return false; }
-      var storeP = null;
-      if (L.sb && L.sb.url && L.sb.key) {
-        storeP = postLead(L, d);
-      } else if (L.backend) {
-        storeP = fetch(L.backend, {method:'POST', mode:'no-cors',
-              headers:{'Content-Type':'text/plain'}, body: JSON.stringify(d)})
-              .catch(function(){ return null; });
-      }
-      if (L.mode === 'telegram' && L.tgToken && L.tgChats && L.tgChats.length) {
-        var p = sendTG(d, L);
-        (storeP ? Promise.all([p, storeP]) : p).then(function(){ ok(form); },
-                                                     function(){ ok(form); });
-      } else if (storeP) {
-        storeP.then(function(){ ok(form); }, function(){ ok(form); });
-      } else {
-        __FALLBACK__
-      }
-      return false;
-    });
-  });
-})();
-</script>
-"""
-_TG_CHATS = [str(c) for c in (L.get("telegramChatIds") or
-                              ([L["telegramChatId"]] if L.get("telegramChatId") else []))]
-_USE_TG = bool(L.get("mode") == "telegram" and L.get("telegramBotToken") and _TG_CHATS)
-
-
-def _enc(v):
-    return base64.b64encode(str(v or "").encode()).decode()
-
-
-_SB = cfg.get("admin", {}).get("supabase", {}) or {}
-SITE_TAG = (cfg.get("siteTag") or "").strip() or "site"
-SRC_NAME = (L.get("sourceName") or cfg.get("siteName") or "Сайт").strip()
-_LEADS_CFG = {
-    "backend": cfg.get("admin", {}).get("backendUrl", ""),
-    "mode": L.get("mode", "mailto"),
-    "endpoint": L.get("endpoint", ""),
-    "sb": {"url": _SB.get("url", ""), "key": _SB.get("anonKey", "")},
-    "site": SITE_TAG,
-    "source": SRC_NAME,
-}
-if _USE_TG:
-    _LEADS_CFG["tgToken"] = _enc(L.get("telegramBotToken", ""))
-    _LEADS_CFG["tgChats"] = _TG_CHATS
-    log(f"[leads] заявки уходят в Telegram, получателей: {len(_TG_CHATS)}")
-lead_js = lead_js.replace("__LEADS__", json.dumps(_LEADS_CFG, ensure_ascii=False))
-
-if _USE_TG:
-    tg_fn = """
-  function sendTG(d, L){
-    var text = 'Новая заявка\\\\n' +
-               'Источник: ' + (d.source || L.source || '') + '\\\\n' +
-               'Форма: ' + d.title + '\\\\n' +
-               'Телефон: ' + d.phone +
-               (d.name ? '\\\\nИмя: ' + d.name : '') +
-               (d.email ? '\\\\nE-mail: ' + d.email : '') +
-               (d.message ? '\\\\nСообщение: ' + d.message : '') +
-               '\\\\nСтраница: ' + d.page;
-    var token = atob(L.tgToken);
-    return Promise.all((L.tgChats || []).map(function(chat){
-      return fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({chat_id: chat, text: text})
-      }).catch(function(){ return null; });
-    }));
-  }"""
-    fallback = """
-      sendTG(d, L).then(function(){ ok(form); }, function(){
-        alert('Не удалось отправить. Позвоните нам или напишите на почту.');
-      });"""
-elif L.get("mode") == "endpoint" and L.get("endpoint"):
-    tg_fn = ""
-    fallback = """
-      fetch(L.endpoint, {method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify(d)}).then(function(){ ok(form); },
-            function(){ alert('Ошибка отправки. Попробуйте позже.'); });"""
-else:
-    tg_fn = ""
-    fallback = """
-      window.location.href = 'mailto:__EMAIL__?subject=' + encodeURIComponent(d.title) +
-        '&body=' + encodeURIComponent('Телефон: ' + d.phone + (d.name ? ', Имя: ' + d.name : '') +
-        (d.message ? ', Сообщение: ' + d.message : '') + '\\\\nСтраница: ' + d.page);
-      ok(form);"""
-
-lead_js = lead_js.replace("__TG_FN__", tg_fn).replace("__FALLBACK__", fallback)
-lead_js = lead_js.replace("__EMAIL__", cfg["email"]).replace("__ACCENT__", ACCENT)
+lead_html = build_clients.make_lead_script(cfg)
+log("[leads] клиент заявок подключён (endpoint: %s)"
+    % (build_clients.leads_endpoint(cfg) or "не настроен"))
 
 h = h.replace("</head>", "".join(head_add) + css_html + "</head>")
 
@@ -549,49 +405,61 @@ h = h.replace(
     "}"
     "</style></head>")
 
-h = h.replace("</body>", js_html + lead_js + "</body>")
+h = h.replace("</body>", js_html + lead_html + "</body>")
+
+# Miele: чистая адаптивная вёрстка (frontend.py). Вызываем сразу после
+# подключения клиента заявок: frontend._extract_tail вырезает
+# <script>window.SITE_LEADS …</script> и переносит его в новый <body>.
+try:
+    import frontend
+    h = frontend.improve_html(h, cfg)
+    log("[frontend] вёрстка улучшена (frontend.improve_html)")
+except Exception as e:
+    log("[frontend] пропущен: %s" % e)
+
 
 # ------------------------------------------------------------------ запись
 copy_assets()
 make_logo(os.path.join(OUT, cfg["logo"].replace("/", os.sep)))
+
+
+def _svg_w(p):
+    try:
+        m = re.search(r'width="(\d+)"', open(p, encoding="utf-8").read())
+        return int(m.group(1)) if m else 150
+    except Exception:
+        return 150
+
+
+# ширина <img> в шапке — по фактической ширине SVG
+_w_head = _svg_w(os.path.join(OUT, cfg["logo"].replace("/", os.sep)))
+h = re.sub(r'(<img style="width: )\d+(px;" src="assets/logo\.svg")',
+           rf'\g<1>{_w_head}\g<2>', h, count=1)
+# футер: ВТОРОЙ логотип (светлая версия) и его ширина
+_footer_logo = cfg.get("logoFooter") or "assets/logo-footer.svg"
+_w_foot = _svg_w(os.path.join(OUT, _footer_logo.replace("/", os.sep)))
+
+
+def _second_logo(m):
+    _second_logo.n += 1
+    if _second_logo.n == 2:
+        return m.group(1) + str(_w_foot) + m.group(2) + _footer_logo + m.group(4)
+    return m.group(0)
+
+
+_second_logo.n = 0
+h = re.sub(r'(<img style="width: )\d+(px;" src=")(assets/logo\.svg)(")',
+           _second_logo, h)
+log(f"[logo] шапка {cfg['logo']} ({_w_head}px), футер {_footer_logo} ({_w_foot}px)")
+
 with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
     f.write(h)
 
-# админка (собирается всегда: с Supabase — общее хранилище, без него — локальный режим)
-A = cfg.get("admin", {}) or {}
-_sb = A.get("supabase", {}) or {}
-_adm_url = A.get("backendUrl", "")
-_ADM_PAGE = A.get("page") or "admin.html"
-adm_src = os.path.join(ROOT, "admin_src.html")
-if os.path.isfile(adm_src):
-    tpl = open(adm_src, encoding="utf-8").read()
-    b64 = lambda x: base64.b64encode(str(x).encode()).decode()
-    _chats = json.dumps(_TG_CHATS if _USE_TG else [])
-    _pws, _seen = [], set()
-    for _p in (A.get("storePassword") or "", A.get("password") or "", "holodok2026"):
-        if _p and _p not in _seen:
-            _seen.add(_p)
-            _pws.append(_enc(_p))          # в html попадают только base64
-    tpl = (tpl.replace("@STORE_PWS@", json.dumps(_pws, ensure_ascii=False))
-              .replace("@LEADS_BACKEND@", _adm_url)
-              .replace("@SB_URL_B64@", b64(_sb.get("url", "")))
-              .replace("@SB_KEY_B64@", b64(_sb.get("anonKey", "")))
-              .replace("@TG_TOKEN_B64@", b64(L.get("telegramBotToken", "") if _USE_TG else ""))
-              .replace("@TG_CHATS@", _chats)
-              .replace("@SOURCE_MAP@", json.dumps(cfg.get("sourceNames", {}) or {}, ensure_ascii=False))
-              .replace("@SITE_TAG@", SITE_TAG)
-              .replace("@SITE_MARK@", (A.get("siteMark") or SITE_TAG))
-              .replace("@SOURCE_NAME@", SRC_NAME)
-              .replace("@SITE_NAME@", cfg.get("siteName") or cfg.get("brandPhrase") or "Сервисный центр")
-              .replace("@SHORT_NAME@", cfg.get("logoText") or cfg.get("siteName") or "Сервисный центр")
-              .replace("@PHONE@", cfg.get("phonePretty", ""))
-              .replace("@ACCENT@", ACCENT)
-              .replace("@ACCENT_DARK@", ACCENT_D)
-              .replace("@ADMIN_PW@", A.get("password", "")))
-    open(os.path.join(OUT, _ADM_PAGE), "w", encoding="utf-8").write(tpl)
-    _mode = "Supabase" if (_sb.get("url") and _sb.get("anonKey")) else "локальный режим"
-    log(f"[admin] {_ADM_PAGE} собран (хранилище: {_mode}, уведомления: "
-        f"{len(_TG_CHATS) if _USE_TG else 0} получателей)")
+# админка: страница-шаблон admin_src.html + assets/admin-app.js.
+# Отдельного admin/config.js нет — конфигурация уже внутри страницы.
+_adm_dst = build_clients.render_admin(ROOT, OUT, cfg)
+if _adm_dst:
+    log("[admin] %s собран" % os.path.basename(_adm_dst))
 else:
     log("[admin] нет шаблона admin_src.html")
 
@@ -600,9 +468,7 @@ try:
     import subprocess
     subprocess.run([sys.executable, os.path.join(ROOT, "policy.py")], check=True, cwd=ROOT)
     subprocess.run([sys.executable, os.path.join(ROOT, "seo.py")], check=True, cwd=ROOT)
-    venv_py = r"C:\Users\Cypher\.workbuddy-ai\binaries\python\envs\default\Scripts\python.exe"
-    if os.path.isfile(venv_py):
-        subprocess.run([venv_py, os.path.join(ROOT, "render_brand.py")], check=True, cwd=ROOT)
+    subprocess.run([sys.executable, os.path.join(ROOT, "render_brand.py")], check=True, cwd=ROOT)
 except Exception as e:
     log("[render] ошибка: %s" % e)
 open(os.path.join(OUT, ".nojekyll"), "w").write("")

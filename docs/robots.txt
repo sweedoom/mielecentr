@@ -4,5 +4,5 @@ Disallow: /panel-m7k2.html
 Disallow: /bitrix/
 Disallow: /upload/
 
-Sitemap: https://linar.me/mielecentr/sitemap.xml
-Host: https://linar.me/mielecentr/
+Sitemap: https://miele-technika.ru/sitemap.xml
+Host: https://miele-technika.ru/

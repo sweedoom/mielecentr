@@ -1,77 +1,74 @@
--- ============================================================
---  Supabase — таблица заявок для сайта ХОЛОД-ОК
---  Выполнить один раз: Supabase -> SQL Editor -> New query -> вставить -> Run
--- ============================================================
+-- ============================================================================
+--  ФАЙЛ ОТКЛЮЧЁН. САЙТ: MIELE (Москва).
+--
+--  Раньше этот файл создавал таблицу заявок и функцию public.admin_leads(...)
+--  с ОДНИМ паролем на все сайты, вшитым прямо в текст SQL и выданным роли anon.
+--  Этот пароль лежал в открытом виде в HTML админки, а сама функция была
+--  SECURITY DEFINER и умела list / status / comment / DELETE по всей таблице.
+--  То есть любой, кто знал пароль, читал И УДАЛЯЛ заявки обоих сайтов.
+--
+--  Такой схемы больше нет. Правильная схема — в backend/supabase/migrations/.
+--
+--  ЭТОТ ФАЙЛ НИЧЕГО НЕ СОЗДАЁТ, НИЧЕГО НЕ УДАЛЯЕТ И НЕ МЕНЯЕТ ДАННЫЕ.
+--  Единственное, что он делает — останавливает выполнение с объяснением.
+--  Так сделано намеренно (fail closed): случайный запуск старого SQL не должен
+--  ни вернуть дырявую функцию, ни «на всякий случай» что-то перезаписать.
+--
+--  ЧТО ДЕЛАТЬ ВМЕСТО ЭТОГО
+--    1) Выполнить по порядку (Supabase -> SQL Editor, каждый файл отдельно):
+--         backend/supabase/migrations/0001_schema.sql
+--         backend/supabase/migrations/0002_functions.sql
+--         backend/supabase/migrations/0003_scheduler.sql
+--       0001 сам снимает права с public.admin_leads и удаляет её вместе со
+--       всеми перегрузками; 0002 добавляет лимитер, очередь уведомлений и
+--       атомарный приём заявки; 0003 настраивает планировщик (pg_cron+pg_net+Vault).
+--    2) Завести пользователей админок и приписать их к сайтам:
+--         insert into public.admin_memberships (user_id, site) values
+--           ('<uuid пользователя>', 'mielecentr');
+--    3) Развернуть Edge-функции и заполнить секреты — см. backend/deploy.txt.
+--
+--  ДАННЫЕ НЕ ТРОГАЮТСЯ: ни одна строка public.leads не удаляется и не
+--  переписывается. Старые заявки без тега сайта 0001 аккуратно складывает в
+--  public.leads_legacy_review и НЕ угадывает их принадлежность.
+-- ============================================================================
 
-create table if not exists public.leads (
-  id          uuid primary key default gen_random_uuid(),
-  created_at  timestamptz not null default now(),
-  name        text default '',
-  phone       text not null,
-  message     text default '',
-  source      text default 'Заявка с сайта',
-  page        text default '',
-  status      text not null default 'new',   -- new | work | done | cancel
-  comment     text default '',
-  utm         text default ''
-);
-
--- индекс на дату (админка сортирует по ней)
-create index if not exists leads_created_at_idx on public.leads (created_at desc);
-
--- ---------- миграция: тег сайта (к боту привязано несколько сайтов) ----------
-alter table public.leads add column if not exists site text default '';
-create index if not exists leads_site_idx on public.leads (site);
-
--- ---------- RLS: доступ по анонимному ключу ----------
-alter table public.leads enable row level security;
-
--- любой посетитель может ДОБАВИТЬ заявку (читать таблицу нельзя)
-drop policy if exists "anon insert" on public.leads;
-drop policy if exists "public insert" on public.leads;
-create policy "public insert" on public.leads
-  for insert to public with check (true);
-
--- сервисный ключ (service_role) обходит RLS автоматически
-drop policy if exists "service all" on public.leads;
-create policy "service all" on public.leads
-  for all to service_role using (true) with check (true);
-
--- ---------- закрытый API админки ----------
--- Админка не читает таблицу напрямую. Она вызывает эту функцию и передаёт пароль.
--- Поэтому anon-ключ можно безопасно использовать в браузере: SELECT/UPDATE/DELETE закрыты RLS.
-create or replace function public.admin_leads(
-  p_password text,
-  p_action text default 'list',
-  p_id uuid default null,
-  p_value text default null
-) returns jsonb
-language plpgsql security definer set search_path = public
-as $$
-declare rows jsonb; n integer;
+do $$
 begin
-  -- пароль хранилища. ОДИН на все сайты (бот-то один).
-  -- Старый SQL мог быть с 'holodok2026' — админка пробует оба варианта, так что
-  -- если не будешь перевыполнять этот файл, всё продолжит работать как раньше.
-  if p_password is null or p_password <> 'K9#mR2$vLp7!zQx4' then
-    return jsonb_build_object('ok', false, 'error', 'Неверный пароль');
-  end if;
-  if p_action = 'list' then
-    select coalesce(jsonb_agg(to_jsonb(x) order by x.created_at desc), '[]'::jsonb)
-      into rows from public.leads x;
-    return jsonb_build_object('ok', true, 'leads', rows);
-  elsif p_action = 'status' then
-    update public.leads set status = coalesce(p_value, 'new') where id = p_id;
-  elsif p_action = 'comment' then
-    update public.leads set comment = coalesce(p_value, '') where id = p_id;
-  elsif p_action = 'delete' then
-    delete from public.leads where id = p_id;
-  else
-    return jsonb_build_object('ok', false, 'error', 'unknown action');
-  end if;
-  get diagnostics n = row_count;
-  return jsonb_build_object('ok', true, 'done', (n > 0));
-end;
+  raise exception using
+    errcode = 'feature_not_supported',
+    message = 'Устаревший SQL отключён (fail closed): выполнено ничего, данные не изменены.',
+    detail  = 'Здесь раньше создавалась public.admin_leads(...) — SECURITY DEFINER '
+              'с общим паролем на все сайты, выданная роли anon, включая удаление заявок.',
+    hint    = 'Выполните backend/supabase/migrations/0001_schema.sql, затем 0002_functions.sql '
+              'и 0003_scheduler.sql. Порядок развёртывания описан в backend/deploy.txt.';
+end
 $$;
 
-grant execute on function public.admin_leads(text, text, uuid, text) to anon, authenticated;
+-- ============================================================================
+--  СПРАВКА (не выполняется — здесь только комментарии).
+--
+--  Проверить, что дырявой функции больше нет (после 0001_schema.sql):
+--
+--    select count(*) as admin_leads_left
+--      from pg_proc p
+--      join pg_namespace n on n.oid = p.pronamespace
+--     where n.nspname = 'public' and p.proname = 'admin_leads';
+--    -- ожидается 0
+--
+--  Проверить, что anon не имеет доступа к таблице:
+--
+--    select has_table_privilege('anon', 'public.leads', 'select') as anon_read,
+--           has_table_privilege('anon', 'public.leads', 'insert') as anon_write;
+--    -- ожидается false, false
+--
+--  Посмотреть заявки, у которых сайт не определён (их не видит ни одна админка):
+--
+--    select l.id, l.created_at, l.phone, r.reason
+--      from public.leads_legacy_review r
+--      join public.leads l on l.id = r.lead_id
+--     order by l.created_at desc;
+--
+--  Осознанно отнести такую заявку к сайту (только вручную, service_role):
+--
+--    select public.assign_legacy_site('<uuid заявки>', 'mielecentr');
+-- ============================================================================

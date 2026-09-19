@@ -4,3 +4,7 @@ __pycache__/
 live.html
 shot_*.png
 adm_*.png
+.env
+.env.*
+!.env.example
+*.secrets.*

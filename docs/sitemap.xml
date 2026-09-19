@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://linar.me/mielecentr/index.html</loc>
+    <loc>https://miele-technika.ru/index.html</loc>
     <lastmod>2026-09-19</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://linar.me/mielecentr/politika.html</loc>
+    <loc>https://miele-technika.ru/politika.html</loc>
     <lastmod>2026-09-19</lastmod>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://linar.me/mielecentr/soglasie.html</loc>
+    <loc>https://miele-technika.ru/soglasie.html</loc>
     <lastmod>2026-09-19</lastmod>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://miele-technika.ru/requisites.html</loc>
+    <lastmod>2026-09-19</lastmod>
+    <priority>0.2</priority>
   </url>
 </urlset>
