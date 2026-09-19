@@ -29,6 +29,13 @@
 
   var SELECT_COLS = "id,created_at,name,phone,message,source,page,status,comment,site";
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  /* Тот же предел, что и в БД (CHECK leads_comment_len_chk + триггер). */
+  var MAX_COMMENT = 2000;
+
+  function capComment(value) {
+    var s = String(value == null ? "" : value);
+    return s.length > MAX_COMMENT ? s.slice(0, MAX_COMMENT) : s;
+  }
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -143,6 +150,8 @@
     csvCell: csvCell,
     normalizeCfg: normalizeCfg,
     messageForError: messageForError,
+    capComment: capComment,
+    MAX_COMMENT: MAX_COMMENT,
     STATUS: STATUS,
     SELECT_COLS: SELECT_COLS,
   };
@@ -325,7 +334,7 @@
   async function patchLead(id, patch) {
     var body = {};
     if (Object.prototype.hasOwnProperty.call(patch, "status")) body.status = patch.status;
-    if (Object.prototype.hasOwnProperty.call(patch, "comment")) body.comment = patch.comment;
+    if (Object.prototype.hasOwnProperty.call(patch, "comment")) body.comment = capComment(patch.comment);
     if (!Object.keys(body).length) return true;
 
     var url = CFG.url + "/rest/v1/leads?id=eq." + encodeURIComponent(id) +
