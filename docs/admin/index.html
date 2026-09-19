@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Заявки — Сервисный центр по ремонту техники Miele</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.png">
+<style>
+:root{
+  --a:#a3000a; --ad:#7a0008;
+  --bg:#f4f5f7; --card:#fff; --line:#e1e4ea; --txt:#15181d; --mut:#6b7280;
+  --ok:#1a7f43; --warn:#a35a00; --bad:#b4232a; --info:#2f6bff;
+  --sh:0 1px 2px rgba(16,20,30,.06),0 8px 24px rgba(16,20,30,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);
+  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:var(--a)}
+button{font-family:inherit}
+.hide{display:none !important}
+
+/* ---------- вход ---------- */
+#login{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:linear-gradient(135deg,var(--a) 0%,var(--ad) 100%)}
+#loginBox{background:#fff;border-radius:16px;padding:32px 28px;width:100%;max-width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+#loginBox h1{margin:0 0 6px;font-size:20px}
+#loginBox .sub{margin:0 0 20px;color:var(--mut);font-size:13px}
+#loginBox input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+  font-size:15px;outline:none;margin-bottom:10px;background:#fff;color:var(--txt)}
+#loginBox input:focus{border-color:var(--a)}
+#loginBtn{width:100%;padding:13px;border:0;border-radius:10px;background:var(--a);color:#fff;
+  font-weight:700;font-size:15px;cursor:pointer}
+#loginBtn:hover{background:var(--ad)}
+#loginBtn[disabled]{opacity:.6;cursor:default}
+#loginErr{color:var(--bad);font-size:13px;margin-top:10px;min-height:18px;word-break:break-word}
+
+/* ---------- шапка (переносится на узких экранах) ---------- */
+.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+  padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.top .brand{font-weight:800;font-size:17px;white-space:nowrap}
+.top .site{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;
+  background:var(--a);color:#fff;white-space:nowrap}
+.top .sp{flex:1 1 0;min-width:0}
+.f{padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--txt);
+  font:inherit;font-size:14px;outline:none;min-width:0;max-width:100%}
+.f:focus{border-color:var(--a)}
+.top .grow{flex:1 1 190px;min-width:140px;max-width:300px}
+.btn{padding:9px 14px;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;
+  font-size:14px;font-weight:600;color:var(--txt);white-space:nowrap}
+.btn:hover{background:#f3f4f6}
+.btn.pri{background:var(--a);border-color:var(--a);color:#fff}
+.btn.pri:hover{background:var(--ad)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:7px}
+.btn.dgr{color:var(--bad);border-color:#f0c3c6}
+.btn.dgr:hover{background:#fdecec}
+.btn[disabled]{opacity:.55;cursor:default}
+
+main{padding:16px 16px 48px;max-width:1240px;margin:0 auto}
+
+/* ---------- карточки ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--sh)}
+.card .k{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.card .v{font-size:26px;font-weight:800;margin-top:6px;line-height:1}
+.card.a .v{color:var(--a)} .card.n .v{color:var(--info)}
+.card.w .v{color:var(--warn)} .card.d .v{color:var(--ok)}
+
+/* ---------- таблица + горизонтальная прокрутка ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--sh);overflow:hidden}
+/* .tw — обёртка прокрутки: на телефоне таблица скроллится ВНУТРИ себя, страница не «разъезжается» */
+.tw{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:780px;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:11px 14px;background:#fafbfc;border-bottom:1px solid var(--line);
+  font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid #f1f2f4;vertical-align:top}
+tr:hover td{background:#fcfcfd}
+td.dt{white-space:nowrap;color:var(--mut);font-size:13px}
+td.ph b{font-weight:700;white-space:nowrap}
+td.msg{max-width:320px;color:var(--mut);font-size:13px}
+.acts{white-space:nowrap;text-align:right}
+.st{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.st.new{background:#e8f0fe;color:#1a4bd8} .st.work{background:#fff4e0;color:#a35b00}
+.st.done{background:#e6f6ec;color:#0b7a45} .st.cancel{background:#fdeaea;color:#b02020}
+.empty{padding:44px 20px;text-align:center;color:var(--mut);border-top:1px solid var(--line)}
+.empty b{display:block;font-size:16px;color:var(--txt);margin-bottom:6px}
+.scrollHint{display:none;padding:8px 14px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+
+/* ---------- панель заявки ---------- */
+#shade{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:40}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100%;background:#fff;z-index:41;
+  box-shadow:-10px 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column}
+#drawer .dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+#drawer .dh h3{margin:0;font-size:17px;flex:1;word-break:break-word}
+#drawer .db{padding:16px 18px;overflow:auto;flex:1}
+.kv{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f1f2f4;font-size:14px}
+.kv span{width:112px;flex:0 0 112px;color:var(--mut)}
+.kv b{font-weight:600;word-break:break-word;min-width:0}
+#drawer label{display:block;font-size:12px;color:var(--mut);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.4px}
+#drawer textarea,#drawer select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+  font-family:inherit;font-size:14px;background:#fff;color:var(--txt);outline:none}
+#drawer textarea{min-height:88px;resize:vertical}
+#drawer .df{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- модалка ---------- */
+#modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  padding:16px;background:rgba(16,24,40,.5)}
+#modal .mb{background:#fff;border-radius:15px;width:100%;max-width:460px;padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:100%;overflow:auto}
+#modal h3{margin:0 0 14px;font-size:18px}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+  font-family:inherit;font-size:14px;outline:none;background:#fff;color:var(--txt)}
+.fld input:focus,.fld textarea:focus{border-color:var(--a)}
+.modalF{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.hint{font-size:12px;color:var(--mut);margin-top:8px}
+
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#111827;color:#fff;
+  padding:11px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;
+  z-index:99;max-width:92vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:760px){
+  .top{padding:10px 12px;gap:8px}
+  .top .grow{flex:1 1 100%;max-width:none}
+  .top .sp{display:none}
+  main{padding:12px 12px 44px}
+  .scrollHint{display:block}
+  #drawer{width:100%}
+  .kv span{width:96px;flex:0 0 96px}
+  #toast{bottom:14px}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div id="loginBox">
+    <h1>Заявки</h1>
+    <p class="sub">Сервисный центр по ремонту техники Miele</p>
+    <form id="loginForm" autocomplete="on">
+      <input id="email" type="email" placeholder="Email" autocomplete="username" required>
+      <input id="password" type="password" placeholder="Пароль" autocomplete="current-password" required>
+      <button id="loginBtn" type="submit">Войти</button>
+    </form>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<div id="app" class="hide">
+  <header class="top">
+    <div class="brand">Заявки</div>
+    <div class="site" id="siteChip">Сервисный центр по ремонту техники Miele</div>
+    <div class="sp"></div>
+    <input class="f grow" id="q" placeholder="Поиск: имя, телефон, текст…">
+    <select class="f" id="fStatus">
+      <option value="">Все статусы</option>
+      <option value="new">Новые</option>
+      <option value="work">В работе</option>
+      <option value="done">Завершённые</option>
+      <option value="cancel">Отменённые</option>
+    </select>
+    <select class="f" id="fSrc"><option value="">Все формы</option></select>
+    <select class="f" id="sort">
+      <option value="desc">Сначала новые</option>
+      <option value="asc">Сначала старые</option>
+    </select>
+    <button class="btn pri" id="btnAdd">+ Заявка</button>
+    <button class="btn" id="btnCsv">CSV</button>
+    <button class="btn" id="btnRefresh">Обновить</button>
+    <button class="btn" id="btnLogout">Выйти</button>
+  </header>
+
+  <main>
+    <div class="cards" id="cards"></div>
+
+    <div class="panel">
+      <div class="tw" id="tw">
+        <table>
+          <thead><tr>
+            <th>Дата</th><th>Имя</th><th>Телефон</th><th>Сообщение</th>
+            <th>Форма</th><th>Статус</th><th></th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty hide" id="empty"><b>Заявок нет</b>Как только они появятся — будут здесь</div>
+      <div class="scrollHint" id="scrollHint">Таблицу можно прокручивать вбок →</div>
+    </div>
+  </main>
+</div>
+
+<div id="shade" class="hide"></div>
+
+<div id="drawer" class="hide">
+  <div class="dh"><h3 id="dTitle">Заявка</h3><button class="btn sm" id="dClose">Закрыть</button></div>
+  <div class="db">
+    <div id="dBody"></div>
+    <label for="dComment">Комментарий</label>
+    <textarea id="dComment"></textarea>
+    <label for="dStatus">Статус</label>
+    <select id="dStatus">
+      <option value="new">Новая</option>
+      <option value="work">В работе</option>
+      <option value="done">Завершена</option>
+      <option value="cancel">Отменена</option>
+    </select>
+    <div class="hint">Удаления нет: ненужная заявка архивируется статусом «Отменена».
+      Комментарий и статус сохраняются кнопкой «Сохранить».</div>
+  </div>
+  <div class="df">
+    <button class="btn pri" id="dSave">Сохранить</button>
+    <button class="btn dgr" id="dCancelStatus">Отменить заявку</button>
+    <button class="btn" id="dRevert">Закрыть</button>
+  </div>
+</div>
+
+<div id="modal" class="hide">
+  <div class="mb">
+    <h3>Новая заявка</h3>
+    <div class="fld"><label for="mName">Имя</label><input id="mName" placeholder="Иван"></div>
+    <div class="fld"><label for="mPhone">Телефон *</label><input id="mPhone" inputmode="tel" placeholder="+7 (900) 000-00-00"></div>
+    <div class="fld"><label for="mMsg">Сообщение</label><textarea id="mMsg" placeholder="Что случилось с техникой"></textarea></div>
+    <div class="hint" id="mHint">Заявка сохранится в этом же хранилище, что и заявки с сайта.</div>
+    <div class="modalF">
+      <button class="btn" id="mClose">Отмена</button>
+      <button class="btn pri" id="mSave">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Конфигурация подставляется сборкой на место маркера ниже: JSON вида
+     {"site":"...","sourceName":"...","supabaseUrl":"...","supabaseAnonKey":"...",
+      "submitUrl":"...","phone":"..."} -->
+<script>window.ADMIN_CFG = {"supabaseUrl": "https://wedeflvoryfdkzuodgzg.supabase.co", "supabaseAnonKey": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov", "site": "mielecentr", "sourceName": "Сайт Miele (Москва)", "submitUrl": "https://wedeflvoryfdkzuodgzg.supabase.co/functions/v1/leads-mielecentr"};</script>
+<script src="assets/admin-app.js" defer></script>
+</body>
+</html>
