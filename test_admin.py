@@ -9,7 +9,7 @@ DOCS = os.path.join(ROOT, "docs")
 PORT = 8903
 BASE = f"http://127.0.0.1:{PORT}/"
 _cfg = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8"))
-PAGE = (_cfg.get("admin", {}) or {}).get("page") or "admin.html"
+PAGE = (_cfg.get("admin", {}) or {}).get("page") or "admin/"
 PW = (_cfg.get("admin", {}) or {}).get("password") or ""
 
 LEADS = [

@@ -393,25 +393,23 @@ html.fe-no-scroll, body.fe-nav-open { overflow: hidden; }
 <script src="bitrix/templates/gvozdevsoft_master_s1/lib/jquery-1.11.0.min.js"></script>
 <script src="bitrix/templates/gvozdevsoft_master_s1/lib/inputmask/jquery.inputmask.js"></script>
 <script>
-window.SITE_LEADS = {"endpoint": "https://wedeflvoryfdkzuodgzg.supabase.co/functions/v1/leads-mielecentr", "site": "mielecentr", "phone": "+7 (903) 559-00-40"};
-/* Public forms only. No database credentials or owner integration settings. */
+window.SITE_LEADS = {"mode": "telegram", "tgToken": "ODM2MzEzODk3MDpBQUdJUVVpaWZkME81Yno0cVpoNEdSeklYVEJOVTdmMjlhQQ==", "tgChats": ["8723283117", "731734894"], "sourceName": "Сайт Miele (Москва)", "sb": {"url": "https://wedeflvoryfdkzuodgzg.supabase.co", "key": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"}, "site": "mielecentr", "phone": "+7 (903) 559-00-40"};
+/* Public forms client. Two independent channels, no server needed:
+   1) Telegram sendMessage to each admin chat (token is base64 in cfg);
+   2) Supabase REST insert into public.leads (anon key, insert-only RLS).
+   Each channel fails silently on its own — the visitor sees success if at
+   least one channel accepted the lead. Site tag goes into `utm` (legacy
+   scheme) so each admin panel can pick out its own leads. */
 (function () {
   'use strict';
   var cfg = window.SITE_LEADS || {};
+  function b64d(s) { try { return s ? atob(s) : ''; } catch (e) { return ''; } }
+  var TG_TOKEN = b64d(cfg.tgToken);
+  var CHATS = Array.isArray(cfg.tgChats) ? cfg.tgChats : [];
+
   function field(form, selector) {
     var el = form.querySelector(selector);
     return el ? String(el.value || '').trim() : '';
-  }
-  function id() {
-    if (crypto.randomUUID) return crypto.randomUUID();
-    var bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128;
-    var h = Array.from(bytes, function (b) { return b.toString(16).padStart(2, '0'); }).join('');
-    return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
-  }
-  function eligible(form) {
-    return form.matches('form.feedback') || !!form.querySelector('[name="your-tel"]');
   }
   function status(form, text, success) {
     var el = form.querySelector('[data-lead-status]');
@@ -423,6 +421,9 @@ window.SITE_LEADS = {"endpoint": "https://wedeflvoryfdkzuodgzg.supabase.co/funct
     }
     el.className = success ? 'thanks_form' : 'lead-error';
     el.style.color = success ? '#15723d' : '#b42318'; el.textContent = text;
+  }
+  function eligible(form) {
+    return form.matches('form.feedback') || !!form.querySelector('[name="your-tel"]');
   }
   function prepare() {
     document.querySelectorAll('form').forEach(function (form) {
@@ -450,6 +451,43 @@ window.SITE_LEADS = {"endpoint": "https://wedeflvoryfdkzuodgzg.supabase.co/funct
       form.appendChild(trap);
     });
   }
+
+  function tgText(d) {
+    return 'Новая заявка\n' +
+      'Источник: ' + (cfg.sourceName || cfg.site || '—') + '\n' +
+      'Форма: ' + (d.source || '—') + '\n' +
+      'Телефон: ' + d.phone +
+      (d.name ? '\nИмя: ' + d.name : '') +
+      (d.message ? '\nСообщение: ' + d.message : '') +
+      (d.page ? '\nСтраница: ' + d.page : '');
+  }
+  /* Telegram: каждому админу; кто ещё не нажал /start боту — его отправка
+     просто проваливается, остальные всё равно получат. */
+  function sendTG(d) {
+    if (!TG_TOKEN || !CHATS.length) return Promise.resolve(0);
+    var text = tgText(d);
+    return Promise.all(CHATS.map(function (chat) {
+      return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chat, text: text })
+      }).then(function (r) { return r.ok ? 1 : 0; }).catch(function () { return 0; });
+    })).then(function (a) { return a.reduce(function (x, y) { return x + y; }, 0); });
+  }
+  /* Supabase: общее хранилище заявок. Тег сайта кладём в utm (старая схема —
+     колонки site в таблице нет, admin-панели опознают свои заявки по тегу). */
+  function sendSB(d) {
+    var sb = cfg.sb || {};
+    if (!sb.url || !sb.key) return Promise.resolve(0);
+    return fetch(sb.url + '/rest/v1/leads', {
+      method: 'POST',
+      headers: { apikey: sb.key, Authorization: 'Bearer ' + sb.key,
+                 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ name: d.name, phone: d.phone, message: d.message,
+                             source: d.source, page: d.page, status: 'new',
+                             utm: cfg.site || '' })
+    }).then(function (r) { return r.ok ? 1 : 0; }).catch(function () { return 0; });
+  }
+
   document.addEventListener('submit', async function (event) {
     var form = event.target;
     if (!eligible(form)) return;
@@ -465,46 +503,32 @@ window.SITE_LEADS = {"endpoint": "https://wedeflvoryfdkzuodgzg.supabase.co/funct
     if (digits.length !== 11 || !/^[78]/.test(digits)) {
       status(form, 'Введите телефон полностью: +7 и ещё 10 цифр.', false); return;
     }
-    if (!cfg.endpoint || !/^https:\/\//.test(cfg.endpoint)) {
-      status(form, 'Форма пока недоступна. Пожалуйста, позвоните: ' + (cfg.phone || ''), false); return;
-    }
+    if (field(form, '[name="website"]')) return;   // honeypot
     var titleEl = form.querySelector('.title');
     var title = field(form, '[name="title"]') || (titleEl ? titleEl.textContent.trim() : '') || 'Заявка с сайта';
-    // Preserve the same request id and payload after an uncertain network result.
     if (!form._leadPayload) {
       var extras = [field(form, '[name="select"]'), field(form, '[name="promo"]')].filter(Boolean);
       form._leadPayload = {
-        request_id: id(), name: field(form, '[name="form_name"], [name="your-name"]'),
+        name: field(form, '[name="form_name"], [name="your-name"]'),
         phone: '+7' + digits.slice(1),
         message: [field(form, '[name="form_message"], [name="your-textarea"]')].concat(extras).filter(Boolean).join('\n').slice(0, 2000),
-        source: title.slice(0, 120), page: (location.origin + location.pathname).slice(0, 500),
-        consent: true, website: field(form, '[name="website"]')
+        source: title.slice(0, 120), page: (location.origin + location.pathname).slice(0, 500)
       };
     }
     var buttons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"], button:not([type])'));
     buttons.forEach(function (button) { button.disabled = true; });
     form.dataset.leadBusy = '1'; form.setAttribute('aria-busy', 'true');
     status(form, 'Отправляем заявку…', false);
-    var controller = new AbortController(); var timeout = setTimeout(function () { controller.abort(); }, 15000);
     try {
-      var response = await fetch(cfg.endpoint, {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(form._leadPayload), signal: controller.signal
-      });
-      var result = await response.json().catch(function () { return {}; });
-      if (!response.ok || result.ok !== true) {
-        if (response.status === 400 || response.status === 422) form._leadPayload = null;
-        throw new Error(response.status === 429 ? 'rate' : 'failed');
-      }
+      var results = await Promise.all([sendTG(form._leadPayload), sendSB(form._leadPayload)]);
+      if (results[0] + results[1] < 1) throw new Error('failed');
       form.dataset.leadDone = '1';
-      status(form, 'Спасибо! Заявка сохранена. Мы свяжемся с вами.', true);
+      status(form, 'Спасибо! Заявка отправлена. Мы свяжемся с вами.', true);
       form.querySelectorAll('input, textarea, select').forEach(function (el) { el.disabled = true; });
     } catch (error) {
-      status(form, error.message === 'rate'
-        ? 'Слишком много попыток. Попробуйте позже или позвоните: ' + cfg.phone
-        : 'Не удалось подтвердить отправку. Повторите попытку или позвоните: ' + cfg.phone, false);
+      status(form, 'Не удалось отправить. Попробуйте ещё раз или позвоните: ' + (cfg.phone || ''), false);
     } finally {
-      clearTimeout(timeout); form.dataset.leadBusy = '0'; form.removeAttribute('aria-busy');
+      form.dataset.leadBusy = '0'; form.removeAttribute('aria-busy');
       if (form.dataset.leadDone !== '1') buttons.forEach(function (button) { button.disabled = false; });
     }
   }, true);

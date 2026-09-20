@@ -5,11 +5,6 @@
   "siteName": "Сервисный центр по ремонту техники Miele",
   "siteTag": "mielecentr",
   "_siteTag_comment": "Короткий тег сайта - подставляется в заявки, чтобы понимать, откуда пришла заявка",
-  "sourceNames": {
-    "mielecentr": "Сайт Miele (Москва)",
-    "holodok": "Сайт Tylo (Челябинск)"
-  },
-  "_sourceNames_comment": "Тег сайта -> человеческое название. Общее хранилище заявок, поэтому админка подписывает чужие заявки правильно",
   "theme": {
     "accent": "#a3000a",
     "accentDark": "#7a0008",
@@ -107,21 +102,29 @@
     "_comment": "Свои счётчики: yandex: [\"12345678\"], gtag: \"G-XXXXXXX\". Пусто = чужие счётчики вырезаны."
   },
   "admin": {
-    "page": "panel-m7k2.html",
+    "page": "admin/",
     "_page_comment": "Адрес админки этого сайта. У каждого сайта СВОЙ адрес и свой вид; бот один на всех",
-    "_auth_comment": "Вход через Supabase Auth. Пароли задаются владельцем на сервере, не в файлах сайта.",
+    "shortName": "Miele",
+    "_shortName_comment": "Короткая надпись в сайдбаре админки",
+    "password": "K9#mR2$vLp7!zQx4",
+    "_password_comment": "Пароль входа в админку ЭТОГО сайта. В html попадает как есть - адрес админки нигде не публикуется",
     "siteMark": "miele",
     "_siteMark_comment": "Как опознать СВОИ старые заявки (до введения тегов) - по слову в адресе страницы. Только про этот сайт, чужих упоминаний тут нет",
     "supabase": {
       "url": "https://wedeflvoryfdkzuodgzg.supabase.co",
       "anonKey": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"
     },
-    "_supabase_comment": "Supabase: Project URL + anon public ключ (тот же, что на первом сайте)",
-    "backendUrl": ""
+    "_supabase_comment": "Supabase: общее хранилище заявок (Project URL + anon public ключ). Чтение только через rpc admin_leads c паролем"
   },
   "leads": {
-    "mode": "server",
-    "_comment": "Приём через серверную функцию. Уведомления настраиваются только владельцем в секретах сервера.",
+    "mode": "telegram",
+    "_mode_comment": "telegram = заявка уходит из браузера двумя каналами: Telegram-бот + вставка в Supabase. Сервер не нужен",
+    "telegramBotToken": "8363138970:AAGIQUiifd0O5bz4qZh4GRzIXTBNU7f29aA",
+    "telegramChatIds": [
+      "8723283117",
+      "731734894"
+    ],
+    "_chatIds_comment": "Кому приходят заявки в Telegram (один бот на оба сайта)",
     "sourceName": "Сайт Miele (Москва)",
     "_sourceName_comment": "Строка «Источник» в сообщении бота. К боту привязано несколько сайтов - по ней видно, откуда заявка",
     "endpoint": ""

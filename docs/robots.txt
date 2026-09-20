@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /panel-m7k2.html
+Disallow: /admin/
 Disallow: /bitrix/
 Disallow: /upload/
 
