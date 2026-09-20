@@ -243,10 +243,6 @@ td.ph b{font-weight:700}
         <div class="panel">
           <div class="ph"><h3>Подключения</h3></div>
           <div class="row"><div class="lb">Хранилище заявок</div><div class="vl" id="sStore">—</div></div>
-          <div class="row"><div class="lb">Уведомления</div><div class="vl" id="sChats">—</div></div>
-          <div class="row"><div class="lb">Проверка связи</div><div class="vl">
-            <button class="btn sm" id="btnTest">Отправить тестовое уведомление</button>
-            <div class="hint" id="testRes"></div></div></div>
           <div class="row"><div class="lb">Заявки с сайта</div><div class="vl">
             <button class="btn sm" id="btnReload">Перечитать из хранилища</button></div></div>
         </div>
@@ -261,7 +257,6 @@ td.ph b{font-weight:700}
   <div class="dh"><h3 id="dTitle">Заявка</h3><button class="btn sm" id="dClose">Закрыть</button></div>
   <div class="db" id="dBody"></div>
   <div class="df">
-    <button class="btn pri" id="dTg">Отправить в Telegram</button>
     <button class="btn dgr" id="dDel">Удалить</button>
   </div>
 </div>
@@ -275,8 +270,6 @@ td.ph b{font-weight:700}
     <div class="fld"><label>Статус</label><select id="mStatus">
       <option value="new">Новая</option><option value="work">В работе</option>
       <option value="done">Завершена</option><option value="cancel">Отменена</option></select></div>
-    <div class="fld"><label>Уведомление</label><select id="mNotify">
-      <option value="1">Отправить в Telegram</option><option value="0">Только сохранить</option></select></div>
     <div class="mf"><button class="btn" id="mCancel">Отмена</button><button class="btn pri" id="mSave">Сохранить</button></div>
   </div>
 </div>
@@ -290,14 +283,11 @@ var CFG = {
   storePws: ["SzkjbVIyJHZMcDchelF4NA==", "aG9sb2RvazIwMjY="],
   sbUrl: "aHR0cHM6Ly93ZWRlZmx2b3J5ZmRrenVvZGd6Zy5zdXBhYmFzZS5jbw==",
   sbKey: "c2JfcHVibGlzaGFibGVfNk1COTBaLU1zNXdGeEFNdFJNUGEyd182LWNlOFFvdg==",
-  tgToken: "ODM2MzEzODk3MDpBQUg5S0RCYmFraG9fRHd1VXliMl9DWFhBOEMwdUpuUDEzUQ==",
-  tgChats: ["8723283117", "731734894"],
   site: "mielecentr",
-  source: "Сайт Miele (Москва)",
   phone: "+7 (903) 559-00-40"
 };
 function b64d(s){ try { return s ? atob(s) : ""; } catch(e){ return ""; } }
-var SB_URL = b64d(CFG.sbUrl), SB_KEY = b64d(CFG.sbKey), TG_TOKEN = b64d(CFG.tgToken);
+var SB_URL = b64d(CFG.sbUrl), SB_KEY = b64d(CFG.sbKey);
 var LOCAL_KEY = "leads_" + (CFG.site || "site");
 var HAS_SB = !!(SB_URL && SB_KEY);
 
@@ -400,31 +390,6 @@ function setLeadField(id, action, value){
     .catch(function(){ toast("Не удалось сохранить"); });
 }
 
-/* ==================== Telegram ==================== */
-function srcName(l, extra){
-  var base = CFG.source || CFG.site;
-  if (extra) return base + " · " + extra;
-  return base || "—";
-}
-function tgText(l, extra){
-  return "Новая заявка\n" +
-         "Источник: " + srcName(l, extra) + "\n" +
-         "Форма: " + (l.source || "—") + "\n" +
-         "Телефон: " + (l.phone || "—") +
-         (l.name ? "\nИмя: " + l.name : "") +
-         (l.message ? "\nСообщение: " + l.message : "") +
-         (l.page ? "\nСтраница: " + l.page : "");
-}
-function tgSend(text){
-  if (!TG_TOKEN || !CFG.tgChats.length) { toast("Уведомления не настроены"); return Promise.resolve(0); }
-  return Promise.all(CFG.tgChats.map(function(ch){
-    return fetch("https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage", {
-      method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({chat_id: ch, text: text})
-    }).then(function(r){ return r.ok ? 1 : 0; }).catch(function(){ return 0; });
-  })).then(function(a){ return a.reduce(function(x, y){ return x + y; }, 0); });
-}
-
 /* ==================== отрисовка ==================== */
 function cards(){
   var t = ALL.length, n = 0, w = 0, d = 0, today = 0, day = new Date(); day.setHours(0, 0, 0, 0);
@@ -475,7 +440,6 @@ function renderTable(){
       '<td><span class="st ' + s[1] + '" data-act="st">' + s[0] + '</span></td>' +
       '<td class="acts">' +
         '<button class="btn sm" data-act="open">Открыть</button> ' +
-        '<button class="btn sm" data-act="tg">ТГ</button> ' +
         '<button class="btn sm dgr" data-act="del">✕</button>' +
       '</td></tr>';
   }).join("");
@@ -559,7 +523,6 @@ document.addEventListener("click", function(e){
     var l = ALL.filter(function(x){ return String(x.id) === String(id); })[0];
     if (!l) return;
     if (a === "open") { openLead(id); }
-    else if (a === "tg") { tgSend(tgText(l)).then(function(n){ toast(n ? "Отправлено: " + n : "Не удалось отправить"); }); }
     else if (a === "del") { if (confirm("Удалить заявку?")) setLeadField(id, "delete"); }
     else if (a === "st") {
       var order = ["new", "work", "done", "cancel"], nx = order[(order.indexOf(l.status || "new") + 1) % order.length];
@@ -596,21 +559,11 @@ $("#dDel").addEventListener("click", function(){
   if (!current) return;
   if (confirm("Удалить заявку?")) { var id = current.id; closeDrawer(false); setLeadField(id, "delete"); }
 });
-$("#dTg").addEventListener("click", function(){
-  if (!current) return;
-  tgSend(tgText(current)).then(function(n){ toast(n ? "Отправлено получателей: " + n : "Не удалось отправить"); });
-});
-$("#btnTest").addEventListener("click", function(){
-  $("#testRes").textContent = "Отправляю…";
-  tgSend("Тест связи\nИсточник: " + CFG.source + "\nПанель управления").then(function(n){
-    $("#testRes").textContent = n ? "Доставлено получателей: " + n : "Ошибка — проверьте, что получатель нажал /start у бота";
-  });
-});
 
 /* новая заявка */
 $("#btnAdd").addEventListener("click", function(){
   $("#mName").value = ""; $("#mPhone").value = ""; $("#mMsg").value = "";
-  $("#mStatus").value = "new"; $("#mNotify").value = "1";
+  $("#mStatus").value = "new";
   $("#modal").classList.add("on");
 });
 $("#mCancel").addEventListener("click", function(){ $("#modal").classList.remove("on"); });
@@ -623,7 +576,6 @@ $("#mSave").addEventListener("click", function(){
              page: location.href, status: $("#mStatus").value, site: CFG.site};
   $("#modal").classList.remove("on");
   var p = insertLead(rec);
-  if ($("#mNotify").value === "1") { p = p.then(function(){ return tgSend(tgText(rec, "Админка")); }); }
   p.then(function(){ return loadLeads(); }).then(function(){ render(); toast("Заявка добавлена"); });
 });
 
@@ -649,8 +601,6 @@ function enter(){
   if ($("#pw").value !== CFG.pw) { $("#loginErr").textContent = "Неверный пароль"; return; }
   $("#login").classList.add("hide"); $("#app").classList.remove("hide");
   $("#sStore").textContent = HAS_SB ? "Supabase (общее хранилище)" : "Локально в этом браузере";
-  $("#sChats").textContent = (CFG.tgChats || []).length
-    ? "включены, получателей: " + CFG.tgChats.length : "не настроены";
   loadLeads().then(function(){
     $("#modeDot").classList.toggle("off", mode !== "sb");
     $("#modeTxt").textContent = mode === "sb" ? "хранилище подключено" : "локальный режим";
