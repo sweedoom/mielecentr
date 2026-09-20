@@ -119,7 +119,7 @@
   "leads": {
     "mode": "telegram",
     "_mode_comment": "telegram = заявка уходит из браузера двумя каналами: Telegram-бот + вставка в Supabase. Сервер не нужен",
-    "telegramBotToken": "8363138970:AAGIQUiifd0O5bz4qZh4GRzIXTBNU7f29aA",
+    "telegramBotToken": "8363138970:AAH9KDBbakho_DwuUyb2_CXXA8C0uJnP13Q",
     "telegramChatIds": [
       "8723283117",
       "731734894"
