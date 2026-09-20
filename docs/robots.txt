@@ -4,5 +4,5 @@ Disallow: /admin/
 Disallow: /bitrix/
 Disallow: /upload/
 
-Sitemap: https://miele-technika.ru/sitemap.xml
-Host: https://miele-technika.ru/
+Sitemap: https://www.miele-technika.ru/sitemap.xml
+Host: https://www.miele-technika.ru/

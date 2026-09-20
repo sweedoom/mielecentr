@@ -10,8 +10,8 @@
     "accentDark": "#7a0008",
     "_comment": "Акцентный цвет сайта. accentaDark - для градиентов и hover"
   },
-  "siteUrl": "https://miele-technika.ru/",
-  "domain": "miele-technika.ru",
+  "siteUrl": "https://www.miele-technika.ru/",
+  "domain": "www.miele-technika.ru",
   "_domain_comment": "Свой домен подключён: DNS A/CNAME ведут на GitHub Pages, build.py создаёт docs/CNAME",
   "phonePretty": "+7 (903) 559-00-40",
   "phoneRaw": "+79035590040",
