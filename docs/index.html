@@ -393,19 +393,13 @@ html.fe-no-scroll, body.fe-nav-open { overflow: hidden; }
 <script src="bitrix/templates/gvozdevsoft_master_s1/lib/jquery-1.11.0.min.js"></script>
 <script src="bitrix/templates/gvozdevsoft_master_s1/lib/inputmask/jquery.inputmask.js"></script>
 <script>
-window.SITE_LEADS = {"mode": "telegram", "tgToken": "ODM2MzEzODk3MDpBQUg5S0RCYmFraG9fRHd1VXliMl9DWFhBOEMwdUpuUDEzUQ==", "tgChats": ["8723283117", "731734894"], "sourceName": "Сайт Miele (Москва)", "sb": {"url": "https://wedeflvoryfdkzuodgzg.supabase.co", "key": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"}, "site": "mielecentr", "phone": "+7 (903) 559-00-40"};
-/* Public forms client. Two independent channels, no server needed:
-   1) Telegram sendMessage to each admin chat (token is base64 in cfg);
-   2) Supabase REST insert into public.leads (anon key, insert-only RLS).
-   Each channel fails silently on its own — the visitor sees success if at
-   least one channel accepted the lead. Site tag goes into `utm` (legacy
-   scheme) so each admin panel can pick out its own leads. */
+window.SITE_LEADS = {"mode": "supabase", "sb": {"url": "https://wedeflvoryfdkzuodgzg.supabase.co", "key": "sb_publishable_6MB90Z-Ms5wFxAMtRMPa2w_6-ce8Qov"}, "site": "mielecentr", "phone": "+7 (903) 559-00-40"};
+/* Public forms client. Single channel: Supabase REST insert (anon key,
+   insert-only RLS). The Telegram notification is sent SERVER-SIDE by a
+   database trigger (pg_net) — the browser holds no secrets at all. */
 (function () {
   'use strict';
   var cfg = window.SITE_LEADS || {};
-  function b64d(s) { try { return s ? atob(s) : ''; } catch (e) { return ''; } }
-  var TG_TOKEN = b64d(cfg.tgToken);
-  var CHATS = Array.isArray(cfg.tgChats) ? cfg.tgChats : [];
 
   function field(form, selector) {
     var el = form.querySelector(selector);
@@ -452,29 +446,8 @@ window.SITE_LEADS = {"mode": "telegram", "tgToken": "ODM2MzEzODk3MDpBQUg5S0RCYmF
     });
   }
 
-  function tgText(d) {
-    return 'Новая заявка\n' +
-      'Источник: ' + (cfg.sourceName || cfg.site || '—') + '\n' +
-      'Форма: ' + (d.source || '—') + '\n' +
-      'Телефон: ' + d.phone +
-      (d.name ? '\nИмя: ' + d.name : '') +
-      (d.message ? '\nСообщение: ' + d.message : '') +
-      (d.page ? '\nСтраница: ' + d.page : '');
-  }
-  /* Telegram: каждому админу; кто ещё не нажал /start боту — его отправка
-     просто проваливается, остальные всё равно получат. */
-  function sendTG(d) {
-    if (!TG_TOKEN || !CHATS.length) return Promise.resolve(0);
-    var text = tgText(d);
-    return Promise.all(CHATS.map(function (chat) {
-      return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chat, text: text })
-      }).then(function (r) { return r.ok ? 1 : 0; }).catch(function () { return 0; });
-    })).then(function (a) { return a.reduce(function (x, y) { return x + y; }, 0); });
-  }
-  /* Supabase: общее хранилище заявок. Тег сайта кладём в utm (старая схема —
-     колонки site в таблице нет, admin-панели опознают свои заявки по тегу). */
+  /* Единственный канал: вставка в общее хранилище заявок. Тег сайта идёт в
+     utm. Уведомление в Telegram отправит триггер базы — отсюда токена нет. */
   function sendSB(d) {
     var sb = cfg.sb || {};
     if (!sb.url || !sb.key) return Promise.resolve(0);
@@ -520,8 +493,8 @@ window.SITE_LEADS = {"mode": "telegram", "tgToken": "ODM2MzEzODk3MDpBQUg5S0RCYmF
     form.dataset.leadBusy = '1'; form.setAttribute('aria-busy', 'true');
     status(form, 'Отправляем заявку…', false);
     try {
-      var results = await Promise.all([sendTG(form._leadPayload), sendSB(form._leadPayload)]);
-      if (results[0] + results[1] < 1) throw new Error('failed');
+      var ok = await sendSB(form._leadPayload);
+      if (!ok) throw new Error('failed');
       form.dataset.leadDone = '1';
       status(form, 'Спасибо! Заявка отправлена. Мы свяжемся с вами.', true);
       form.querySelectorAll('input, textarea, select').forEach(function (el) { el.disabled = true; });

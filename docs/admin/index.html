@@ -279,8 +279,6 @@ td.ph b{font-weight:700}
 <script>
 /* ==================== конфиг, подставленный сборкой ==================== */
 var CFG = {
-  pw: "K9#mR2$vLp7!zQx4",
-  storePws: ["SzkjbVIyJHZMcDchelF4NA==", "aG9sb2RvazIwMjY="],
   sbUrl: "aHR0cHM6Ly93ZWRlZmx2b3J5ZmRrenVvZGd6Zy5zdXBhYmFzZS5jbw==",
   sbKey: "c2JfcHVibGlzaGFibGVfNk1COTBaLU1zNXdGeEFNdFJNUGEyd182LWNlOFFvdg==",
   site: "mielecentr",
@@ -317,28 +315,21 @@ var ST = {new:["Новая","new"], work:["В работе","work"], done:["За
 function sbHeaders(){ return {apikey: SB_KEY, Authorization: "Bearer " + SB_KEY,
   "Content-Type": "application/json"}; }
 
-// Пароль хранилища может отличаться от пароля входа (он вшит в SQL-функцию).
-// Пробуем по очереди — так админка живёт и со старым, и с новым SQL.
-var STORE_PWS = (CFG.storePws || []).map(b64d).filter(Boolean);
-if (CFG.pw && STORE_PWS.indexOf(CFG.pw) === -1) STORE_PWS.unshift(CFG.pw);
-var _triedPw = 0;
-function rpc(action, id, value){
-  var pws = STORE_PWS.length ? STORE_PWS : [CFG.pw];
-  function attempt(i){
-    if (i >= pws.length) return Promise.reject(new Error("Хранилище отказало в доступе"));
-    return fetch(SB_URL + "/rest/v1/rpc/admin_leads", {method: "POST", headers: sbHeaders(),
-      body: JSON.stringify({p_password: pws[i], p_action: action, p_id: id || null, p_value: value || null})
-    }).then(function(r){ return r.json(); }).then(function(j){
-      var o = Array.isArray(j) ? j[0] : j;
-      o = (o && o.admin_leads) ? o.admin_leads : o;
-      if (!o || o.ok === false) {
-        if (/парол/i.test((o && o.error) || "")) { _triedPw = i + 1; return attempt(i + 1); }
-        throw new Error((o && o.error) || "Отказ хранилища");
-      }
-      return o;
-    });
-  }
-  return attempt(_triedPw < pws.length ? _triedPw : 0);
+/* Пароль админки хранится ТОЛЬКО в базе (private.admin_auth, читать может
+   только владелец БД) и попадает в панель через форму входа. В HTML
+   пароля нет — выцепить его из кода страницы невозможно. */
+var SESS_PW = "";
+function rpc(action, id, value, pwOverride){
+  var pw = pwOverride || SESS_PW;
+  if (!pw) return Promise.reject(new Error("Нет пароля сессии"));
+  return fetch(SB_URL + "/rest/v1/rpc/admin_leads_site", {method: "POST", headers: sbHeaders(),
+    body: JSON.stringify({p_site: CFG.site, p_password: pw, p_action: action,
+                          p_id: id || null, p_value: value || null})
+  }).then(function(r){ return r.json(); }).then(function(j){
+    var o = Array.isArray(j) ? j[0] : j;
+    if (!o || o.ok === false) throw new Error((o && o.error) || "Отказ хранилища");
+    return o;
+  });
 }
 
 function localGet(){ try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); } catch(e){ return []; } }
@@ -362,14 +353,12 @@ function insertLead(rec){
   if (!HAS_SB) { var a = localGet(); a.unshift(rec); localSet(a); ALL = a; return Promise.resolve(); }
   var base = {name: rec.name || "", phone: rec.phone || "", message: rec.message || "",
               source: rec.source || "", page: rec.page || "", status: rec.status || "new",
-              site: rec.site || CFG.site};
+              utm: rec.site || CFG.site || ""};
   function send(p){ return fetch(SB_URL + "/rest/v1/leads", {method: "POST",
     headers: Object.assign(sbHeaders(), {Prefer: "return=minimal"}), body: JSON.stringify(p)}); }
   return send(base).then(function(r){
-    if (r.ok) return true;
-    var p2 = {}; for (var k in base) { if (k !== "site") p2[k] = base[k]; }
-    p2.utm = CFG.site || "";                       // старая схема: тег сайта в utm
-    return send(p2).then(function(r2){ if (!r2.ok) throw new Error("insert " + r2.status); return true; });
+    if (!r.ok) throw new Error("insert " + r.status);
+    return true;
   }).then(function(){ return loadLeads(); }).catch(function(){
     var a2 = localGet(); a2.unshift(rec); localSet(a2); ALL = a2; return true; });
 }
@@ -598,7 +587,17 @@ $("#btnCsv").addEventListener("click", function(){
 
 /* вход */
 function enter(){
-  if ($("#pw").value !== CFG.pw) { $("#loginErr").textContent = "Неверный пароль"; return; }
+  var pw = $("#pw").value;
+  if (!pw) { $("#loginErr").textContent = "Введите пароль"; return; }
+  $("#loginErr").textContent = "";
+  if (!HAS_SB) { SESS_PW = pw; afterEnter(); return; }
+  rpc("list", null, null, pw).then(function(){
+    SESS_PW = pw; afterEnter();
+  }).catch(function(e){
+    $("#loginErr").textContent = /парол/i.test(String(e && e.message)) ? "Неверный пароль" : "Хранилище недоступно";
+  });
+}
+function afterEnter(){
   $("#login").classList.add("hide"); $("#app").classList.remove("hide");
   $("#sStore").textContent = HAS_SB ? "Supabase (общее хранилище)" : "Локально в этом браузере";
   loadLeads().then(function(){
